@@ -112,10 +112,10 @@ Key
 
    * Method
    
-   Constructor that sets the number of hits it takes for the block to break,sets
+        * Constructor that sets the number of hits it takes for the block to break,sets
    the position of the block, and sets the color of the block
    
-   Getter for the position of the block
+        * Getter for the position of the block
 
  * Class 2 - Ball class
    * Purpose
@@ -125,17 +125,12 @@ Key
     
    * Method
    
-   Constructor that sets the size, color, and position of the block
-   
-   Method to change ball position
-   
-   Method to check if ball has collided with block
-   
-   Method to check if ball has collided with the wall
-   
-   Method to check if the ball has collided with the paddle
-   
-   Method to check if the ball is still in play (i.e not below the paddle)
+        * Constructor that sets the size, color, and position of the block
+        * Method to change ball position
+        * Method to check if ball has collided with block
+        * Method to check if ball has collided with the wall
+        * Method to check if the ball has collided with the paddle
+        * Method to check if the ball is still in play (i.e not below the paddle)
 
  * Class 3 - Paddle Class
    * Purpose
@@ -144,16 +139,20 @@ Key
 
    * Method
    
-   Constructor to set the size and initial position of the paddle.
+        * Constructor to set the size and initial position of the paddle.
 
- * Class 4 - Power-Up Class (Abstract)
+ * Class 4 - Power-Up Class
    * Purpose
-
+    
+    To create a class for all types of powerups that will be implemented in the game.
+    
    * Method
+        * Method to check if ball collided with it
 
  * Class 5 Game Class
    * Purpose
    
-   The class that 
+   The class that starts and runs the game using JavaFX.
 
    * Method
+        * Method to update level once all blocks are cleared
