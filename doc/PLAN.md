@@ -1,56 +1,85 @@
 # Game Plan
 ## NAMEs
 
+breaking generates more balls (or other ways of adding balls)
+moving blocks
+variations of blocks (change how much is needed to break)
+preset images
 
 ### Breakout Variation Ideas
 
 ### Interesting Existing Game Variations
 
- * Game 1
+ * Game 1 - Bricks n Balls: this was interesting because it had more of a puzzle/strategy feel towards the game. The game
+ had a grid of blocks that had numbers on them. Whenever a ball was aimed and shot at a block, the number on the block dropped as 
+ more balls hit it. The ball richochets off the wall and other blocks and drops the number on more blocks until finally
+ it drops off the screen. This variation was really interesting because we liked the way users were able to aim and 
+ use angles to strategize rather than repeatedly trying to save the ball from falling off the screen. Also, we liked the
+ idea that the blocks don't break immediately, adding a more intense feel.
 
- * Game 2
+ * Game 2 - Centipong: this was interesting because the game felt very dynamic because the blocks themselves moved
+ and more were added exponentially as blocks break. This game had "centipede-like" moving blocks that went back and forth horizontally and slowly
+ crawled down the screen. Whenever a user broke a block, a new ball was generated from the broken block. This quickly
+ cascaded into a large chain reaction that was cool and chaotic to watch and is also very satisfying.
 
 
 #### Block Ideas
 
- * Block 1
+ * Block 1 - single-hit: takes one hit for the user to destroy. This will be the most standard block.
 
- * Block 2
+ * Block 2 - multi-hit: takes more than one hit for the user to destroy. This can start off as a low number of hits needed
+   and progresses into larger numbers as the level count goes up.
 
- * Block 3
+ * Block 3 - unbreakable: creates obstacles for the user to get around to hit the other blocks. This can be used in higher levels
+   to add challenge to the game.
+   
+ * Block 4 - bomb block: does damage to all blocks in a surrounding radius when broken.
 
 
 #### Power Up Ideas
 
- * Power Up 1
+ * Power Up 1 - +1 life. When you hit this powerup with a ball, it adds an extra life (in the form of another ball to use
+ in the future).
 
- * Power Up 2
+ * Power Up 2 - slowdown. When you hit this powerup with a ball, it slows down your ball for a certain amount of time,
+ which can give the user more time to react.
 
- * Power Up 3
+ * Power Up 3 - decrease size of paddle. This powerup is bad for the user as it will require the user to be more accurate
+ in paddle placement when the ball falls down.
 
 
 #### Cheat Key Ideas
 
- * Cheat Key 1
+ * Cheat Key 1 - 'I' - add 1 life
 
- * Cheat Key 2
+ * Cheat Key 2 - 'Q' - clear all blocks
 
- * Cheat Key 3
+ * Cheat Key 3 - space key: pause or unpause the game
 
- * Cheat Key 4
+ * Cheat Key 4 - 'R' - reset game
 
 
 #### Level Descriptions
 
+Key
+(---- represents 1 single-hit block)
+
  * Level 1
-   * Block Configuration
+   * Block Configuration (5x5 grid of single-hit blocks) - basic implementation
+   ---- ---- ---- ---- ----
+   ---- ---- ---- ---- ----
+   ---- ---- ---- ---- ----
+   ---- ---- ---- ---- ----
+   ---- ---- ---- ---- ----
 
    * Variation features
+   Every N number of times the ball hits the paddle, the blocks progress downwards.
 
  * Level 2
    * Block Configuration
 
    * Variation features
+   The blocks are moving.
 
  * Level 3
    * Block Configuration
