@@ -104,27 +104,56 @@ Key
 
 ### Possible Classes
 
- * Class 1 - Block Class
+ * Class 1 - Block Class (Abstract)
+   * Purpose
+   
+   The purpose of this class is to create an extendable class for all the different
+   types of blocks to be implemented in the program. This class will likely be abstract.
+
+   * Method
+   
+   Constructor that sets the number of hits it takes for the block to break,sets
+   the position of the block, and sets the color of the block
+   
+   Getter for the position of the block
+
+ * Class 2 - Ball class
+   * Purpose
+    
+    The purpose of this class is to implement the ball used to break the blocks in
+    the game.  
+    
+   * Method
+   
+   Constructor that sets the size, color, and position of the block
+   
+   Method to change ball position
+   
+   Method to check if ball has collided with block
+   
+   Method to check if ball has collided with the wall
+   
+   Method to check if the ball has collided with the paddle
+   
+   Method to check if the ball is still in play (i.e not below the paddle)
+
+ * Class 3 - Paddle Class
+   * Purpose
+   
+   To implement the user-controlled paddle for the program
+
+   * Method
+   
+   Constructor to set the size and initial position of the paddle.
+
+ * Class 4 - Power-Up Class (Abstract)
    * Purpose
 
    * Method
 
- * Class 2
+ * Class 5 Game Class
    * Purpose
-
-   * Method
-
- * Class 3
-   * Purpose
-
-   * Method
-
- * Class 4
-   * Purpose
-
-   * Method
-
- * Class 5
-   * Purpose
+   
+   The class that 
 
    * Method
