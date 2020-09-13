@@ -63,6 +63,7 @@ preset images
 
 Key
 (---- represents 1 single-hit block)
+(==== represents multi-hit blocks)
 
  * Level 1
    * Block Configuration (5x5 grid of single-hit blocks) - basic implementation
@@ -75,13 +76,18 @@ Key
    * Variation features
    Every N number of times the ball hits the paddle, the blocks progress downwards.
 
- * Level 2
+ * Level 2 - more advanced level with variation in blocks
    * Block Configuration
+  ---- ---- ---- ---- ----
+  ---- ====      ==== ----
+  ----      ----      ----
+  ---- ====      ==== ----
+  ---- ---- ---- ---- ----
 
    * Variation features
-   The blocks are moving.
+   Different types of blocks are used (multi-hit blocks and 1 hit blocks).
 
- * Level 3
+ * Level 3 - preset art
    * Block Configuration 
 
     ----- -----
@@ -94,11 +100,11 @@ Key
 
     (miniature, un-detailed version, but it's the Duke logo!)
    * Variation features
-
+    As opposed to the regular breakout, our game will have presets in which the blocks will be generated in some sort of art.
 
 ### Possible Classes
 
- * Class 1
+ * Class 1 - Block Class
    * Purpose
 
    * Method
