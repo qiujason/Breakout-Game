@@ -82,8 +82,17 @@ Key
    The blocks are moving.
 
  * Level 3
-   * Block Configuration
+   * Block Configuration 
 
+    ----- -----
+    -----	-----
+    -----	  -----
+    -----	  -----
+    -----	  -----
+    -----	-----
+    ----- -----
+
+    (miniature, un-detailed version, but it's the Duke logo!)
    * Variation features
 
 
