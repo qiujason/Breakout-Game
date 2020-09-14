@@ -19,7 +19,7 @@ class GameTest extends ApplicationTest {
 
     public void start(Stage stage) throws Exception {
         // attach scene to the stage and display it
-        myScene = myGame.setupScene(Game.SIZE, Game.SIZE, Game.BACKGROUND);
+        myScene = myGame.setupScene(Game.WINDOWWIDTH, Game.WINDOWHEIGHT, Game.BACKGROUND);
         stage.setScene(myScene);
         stage.show();
 
@@ -32,7 +32,7 @@ class GameTest extends ApplicationTest {
         assertEquals(250, myBall.getCenterX());
         assertEquals(570, myBall.getCenterY());
         assertEquals(10, myBall.getRadius());
-        assertEquals(2500, myPaddle.getX());
+        assertEquals(200, myPaddle.getX());
         assertEquals(580, myPaddle.getY());
         assertEquals(100, myPaddle.getWidth());
         assertEquals(20, myPaddle.getHeight());
