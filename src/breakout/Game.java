@@ -17,6 +17,9 @@ public class Game extends Application {
     public static final String TITLE = "Breakout"; //TODO: CHANGE LATER
     public static final int FRAMES_PER_SECOND = 60;
     public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
+    public static final int RADIUS = 10;
+    private static final double PADDLEWIDTH = 100;
+    private static final double PADDLEHEIGHT = 20;
 
     private Scene myScene;
 
@@ -24,9 +27,9 @@ public class Game extends Application {
     public void start(Stage primaryStage) throws Exception {
         // attach scene to the stage and display it
         Group root = new Group();
-        myScene = new Scene(root, SIZE, SIZE, BACKGROUND);
+//        myScene = new Scene(root, SIZE, SIZE, BACKGROUND);
 
-//        myScene = setupScene(SIZE, SIZE, BACKGROUND);
+        myScene = setupScene(SIZE, SIZE, BACKGROUND);
         primaryStage.setScene(myScene);
         primaryStage.setTitle(TITLE);
         primaryStage.show();
@@ -38,14 +41,15 @@ public class Game extends Application {
         animation.play();
     }
 
-//    Scene setupScene (int width, int height, Paint background) {
-//        // create one top level collection to organize the things in the scene
-//        Group root = new Group();
-//        // make some shapes and set their properties
-//        myRacer = new Circle(width / 2, height / 2, RACER_SIZE / 2);
+    Scene setupScene (int width, int height, Paint background) {
+        // create one top level collection to organize the things in the scene
+        Group root = new Group();
+        // make some shapes and set their properties
+        Ball ball = new Ball(width / 2, height - RADIUS - (int)PADDLEHEIGHT, RADIUS, Color.WHITE);
+        Paddle paddle = new Paddle(width/2 - PADDLEWIDTH/2, height - PADDLEHEIGHT, PADDLEWIDTH, PADDLEHEIGHT, Color.RED); //TODO: Clean this
 //        myRacer.setFill(RACER_COLOR);
 //        myRacer.setId("racer");
-//        // x and y represent the top left corner, so center it in window
+        // x and y represent the top left corner, so center it in window
 //        myMover = new Rectangle(width / 2 - MOVER_SIZE / 2, height / 2 - VERTICAL_OFFSET, MOVER_SIZE, MOVER_SIZE);
 //        myMover.setArcWidth(MOVER_ROUNDING);
 //        myMover.setArcHeight(MOVER_ROUNDING);
@@ -54,17 +58,18 @@ public class Game extends Application {
 //        myGrower = new Rectangle(width / 2 - GROWER_SIZE / 2, height / 2 + VERTICAL_OFFSET, GROWER_SIZE, GROWER_SIZE);
 //        myGrower.setFill(GROWER_COLOR);
 //        myGrower.setId("grower");
-//        // order added to the group is the order in which they are drawn (so last one is on top)
-//        root.getChildren().add(myMover);
+        // order added to the group is the order in which they are drawn (so last one is on top)
+        root.getChildren().add(ball);
+        root.getChildren().add(paddle);
 //        root.getChildren().add(myGrower);
 //        root.getChildren().add(myRacer);
-//        // create a place to see the shapes
-//        Scene scene = new Scene(root, width, height, background);
-//        // respond to input
+        // create a place to see the shapes
+        Scene scene = new Scene(root, width, height, background);
+        // respond to input
 //        scene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
 //        scene.setOnMouseClicked(e -> handleMouseInput(e.getX(), e.getY()));
-//        return scene;
-//    }
+        return scene;
+    }
 
     public static void main (String[] args) {
         launch(args);
