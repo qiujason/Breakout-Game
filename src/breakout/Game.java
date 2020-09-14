@@ -52,7 +52,7 @@ public class Game extends Application {
         Group root = new Group();
 
         // make some shapes and set their properties
-        Ball ball = new Ball(width / 2, height - RADIUS - (int)PADDLEHEIGHT, RADIUS, Color.WHITE);
+        Ball ball = new Ball(width / 2, height - RADIUS - (int)PADDLEHEIGHT, 0, 0, RADIUS, Color.WHITE);
         root.getChildren().add(ball);
 
         Paddle paddle = new Paddle(width/2 - PADDLEWIDTH/2, height - PADDLEHEIGHT, PADDLEWIDTH, PADDLEHEIGHT, Color.RED); //TODO: Clean this
