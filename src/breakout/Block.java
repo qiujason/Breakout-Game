@@ -1,13 +1,14 @@
 package breakout;
 
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import java.util.*;
 
 abstract class Block extends Rectangle {
 
-    public Block(double x, double y, double width, double height, Paint color) {
+    public Block(double x, double y, double width, double height) {
         super(x, y, width, height);
-        setFill(color);
     }
 
     public abstract void setNumberOfHits();
@@ -15,4 +16,5 @@ abstract class Block extends Rectangle {
     public abstract void setPosition();
 
     public abstract void setSize();
+
 }
