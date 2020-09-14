@@ -18,6 +18,7 @@ public class Ball extends Circle {
         this.yPos = yPos;
         this.radius = radius;
         this.color = color;
+        setId("ball");
     }
 
 }

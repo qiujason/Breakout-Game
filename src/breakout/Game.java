@@ -41,7 +41,7 @@ public class Game extends Application {
         animation.play();
     }
 
-    Scene setupScene (int width, int height, Paint background) {
+    public Scene setupScene(int width, int height, Paint background) {
         // create one top level collection to organize the things in the scene
         Group root = new Group();
         // make some shapes and set their properties
