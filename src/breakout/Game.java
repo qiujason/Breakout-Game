@@ -11,6 +11,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.FileNotFoundException;
+
 public class Game extends Application {
     public static final int WINDOWHEIGHT = 600;
     public static final int WINDOWWIDTH = 500;
@@ -19,18 +21,18 @@ public class Game extends Application {
     public static final int FRAMES_PER_SECOND = 60;
     public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
     public static final int RADIUS = 10;
-    private static final int NUMGRIDCOLUMNS = 5;
-    private static final int NUMGRIDROWS = 5;
+    public static final int NUMGRIDCOLUMNS = 5;
+    public static final int NUMGRIDROWS = 5;
     private static final double PADDLEWIDTH = 100;
     private static final double PADDLEHEIGHT = 20;
-    private static final int GAP = RADIUS * 2;
-    private static final double BLOCKWIDTH = (WINDOWWIDTH - (NUMGRIDCOLUMNS + 1) * GAP) / (double)NUMGRIDCOLUMNS;
-    private static final double BLOCKHEIGHT = ((double)WINDOWHEIGHT/2.5 - (NUMGRIDROWS + 1) * GAP) / (double)NUMGRIDROWS;
+    public static final int GAP = RADIUS * 2;
+    public static final double BLOCKWIDTH = (WINDOWWIDTH - (NUMGRIDCOLUMNS + 1) * GAP) / (double)NUMGRIDCOLUMNS;
+    public static final double BLOCKHEIGHT = ((double)WINDOWHEIGHT/2.5 - (NUMGRIDROWS + 1) * GAP) / (double)NUMGRIDROWS;
 
     private Scene myScene;
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws FileNotFoundException {
         // attach scene to the stage and display it
         Group root = new Group();
 //        myScene = new Scene(root, SIZE, SIZE, BACKGROUND);
@@ -47,7 +49,7 @@ public class Game extends Application {
         animation.play();
     }
 
-    public Scene setupScene(int width, int height, Paint background) {
+    public Scene setupScene(int width, int height, Paint background) throws FileNotFoundException {
         // create one top level collection to organize the things in the scene
         Group root = new Group();
 
@@ -58,15 +60,18 @@ public class Game extends Application {
         Paddle paddle = new Paddle(width/2 - PADDLEWIDTH/2, height - PADDLEHEIGHT, PADDLEWIDTH, PADDLEHEIGHT, Color.RED); //TODO: Clean this
         root.getChildren().add(paddle);
 
-        Block[][] gridOfBlocks = new Block[NUMGRIDROWS][NUMGRIDCOLUMNS];
-//        SingleHitBlock singleHitBlock = new SingleHitBlock(BLOCKWIDTH + 10, 20, BLOCKWIDTH, BLOCKHEIGHT, Color.BLUE);
-        for (int row = 0; row < NUMGRIDROWS; row++) {
-            for (int column = 0; column < NUMGRIDCOLUMNS; column++) {
-                double xPos = column * (BLOCKWIDTH + GAP) + GAP;
-                double yPos = row * (BLOCKHEIGHT + GAP) + GAP;
-                root.getChildren().add(new SingleHitBlock(xPos, yPos, BLOCKWIDTH, BLOCKHEIGHT, Color.BLUE));
-            }
-        }
+        BlockConfigurationReader reader = new BlockConfigurationReader();
+        reader.loadLevel(root, 1);
+
+//        Block[][] gridOfBlocks = new Block[NUMGRIDROWS][NUMGRIDCOLUMNS];
+////        SingleHitBlock singleHitBlock = new SingleHitBlock(BLOCKWIDTH + 10, 20, BLOCKWIDTH, BLOCKHEIGHT, Color.BLUE);
+//        for (int row = 0; row < NUMGRIDROWS; row++) {
+//            for (int column = 0; column < NUMGRIDCOLUMNS; column++) {
+//                double xPos = column * (BLOCKWIDTH + GAP) + GAP;
+//                double yPos = row * (BLOCKHEIGHT + GAP) + GAP;
+//                root.getChildren().add(new SingleHitBlock(xPos, yPos, BLOCKWIDTH, BLOCKHEIGHT,1));
+//            }
+//        }
 //        myRacer.setFill(RACER_COLOR);
 //        myRacer.setId("racer");
         // x and y represent the top left corner, so center it in window
