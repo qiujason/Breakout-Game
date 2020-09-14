@@ -7,8 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -114,24 +112,27 @@ public class Game extends Application {
     // Change properties of shapes in small ways to animate them over time
     private void updateShapes (double elapsedTime) {
         // there are more sophisticated ways to animate shapes, but these simple ways work fine to start
+        if (ball.getCenterX() - RADIUS <= 0 || ball.getCenterX() + RADIUS >= WINDOWWIDTH) { //TODO: make collision methods
+            ball.setXVel(-1 * ball.getXVel());
+        } else if (ball.getCenterY() - RADIUS <= 0) {
+            ball.setYVel(-1 * ball.getYVel());
+        } else { // goes below the screen
+//            ball.reset();
+        }
         ball.setCenterX(ball.getCenterX() + ball.getXVel() * elapsedTime);
         ball.setCenterY(ball.getCenterY() + ball.getYVel() * elapsedTime);
-
-//        myRacer.setCenterX(myRacer.getCenterX() + RACER_SPEED * elapsedTime);
-//        myMover.setRotate(myMover.getRotate() - 1);
-//        myGrower.setRotate(myGrower.getRotate() + 1);
     }
 
     // What to do each time a key is pressed
     private void handleKeyInput (KeyCode code) {
         if (code == KeyCode.LEFT) {
             if (paddle.getX() >= 0) {
-              paddle.setX(paddle.getX() - 10);
+              paddle.setX(paddle.getX() - 20);
             }
         }
         else if (code == KeyCode.RIGHT) {
             if (paddle.getX() + PADDLEWIDTH <= WINDOWWIDTH ) {
-              paddle.setX(paddle.getX() + 10);
+              paddle.setX(paddle.getX() + 20);
             }
         }
     }
