@@ -153,18 +153,20 @@ public class Game extends Application {
 
     private void handleKeyInput (KeyCode code) {
         cheatKeys(code);
-        if (code == KeyCode.LEFT) {
-            if (paddle.getX() >= PADDLEDELTA) {
-                paddle.setX(paddle.getX() - PADDLEDELTA);
-                if (!ball.getInMotion()) {
-                    ball.setCenterX(ball.getCenterX() - PADDLEDELTA);
+        if (!pause) {
+            if (code == KeyCode.LEFT) {
+                if (paddle.getX() >= PADDLEDELTA) {
+                    paddle.setX(paddle.getX() - PADDLEDELTA);
+                    if (!ball.getInMotion()) {
+                        ball.setCenterX(ball.getCenterX() - PADDLEDELTA);
+                    }
                 }
-            }
-        } else if (code == KeyCode.RIGHT) {
-            if (paddle.getX() + PADDLEWIDTH <= WINDOWWIDTH - PADDLEDELTA) {
-                paddle.setX(paddle.getX() + PADDLEDELTA);
-                if (!ball.getInMotion()) {
-                    ball.setCenterX(ball.getCenterX() + PADDLEDELTA);
+            } else if (code == KeyCode.RIGHT) {
+                if (paddle.getX() + PADDLEWIDTH <= WINDOWWIDTH - PADDLEDELTA) {
+                    paddle.setX(paddle.getX() + PADDLEDELTA);
+                    if (!ball.getInMotion()) {
+                        ball.setCenterX(ball.getCenterX() + PADDLEDELTA);
+                    }
                 }
             }
         }

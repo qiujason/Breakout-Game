@@ -63,7 +63,7 @@ class GameTest extends BreakoutApplicationTest {
 
         double originalPosition = myPaddle.getOrigX();
         System.out.println(myBall.getOrigX());
-        robot.clickOn()
+        robot.clickOn();
         sleep(1, TimeUnit.SECONDS);    // PAUSE: not typically recommended in tests
         click(myScene, 200, 300);
         sleep(1, TimeUnit.SECONDS);    // PAUSE: not typically recommended in tests
@@ -75,4 +75,29 @@ class GameTest extends BreakoutApplicationTest {
         assertTrue(myPaddle.getX() > originalPosition);
     }
 
+
+
+
+
+
+
+
+
+
+
+    @Test
+    public void testCornerHit(){
+        myBall.setCenterX(50);
+        myBall.setCenterY(60);
+        myBall.setXVel(-25);
+        myBall.setYVel(-30);
+
+        myBall.setInMotion(true);
+        for(int i=0; i < 4; i++){
+            myGame.step(1);
+        }
+
+        assertEquals(myBall.getXVel(), 25);
+        assertEquals(myBall.getYVel(), 30);
+    }
 }
