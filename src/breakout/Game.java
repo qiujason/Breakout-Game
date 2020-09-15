@@ -56,7 +56,7 @@ public class Game extends Application {
         Group root = new Group();
 
         // make some shapes and set their properties
-        ball = new Ball(width / 2, height - RADIUS - (int)PADDLEHEIGHT, RADIUS, Color.ORANGE);
+        ball = new Ball(width / 2, height - RADIUS - (int)PADDLEHEIGHT - 1, RADIUS, Color.ORANGE);
         root.getChildren().add(ball);
 
         paddle = new Paddle(width/2 - PADDLEWIDTH/2, height - PADDLEHEIGHT, PADDLEWIDTH, PADDLEHEIGHT, Color.RED); //TODO: Clean this
@@ -108,27 +108,47 @@ public class Game extends Application {
     // Change properties of shapes in small ways to animate them over time
     private void updateShapes (double elapsedTime) {
         // there are more sophisticated ways to animate shapes, but these simple ways work fine to start
-        if (ball.getCenterX() - RADIUS <= 0 || ball.getCenterX() + RADIUS >= WINDOWWIDTH) { //TODO: make collision methods
+        checkBlockCollision();
+        checkBorderCollision();
+        ball.setCenterX(ball.getCenterX() + ball.getXVel() * elapsedTime);
+        ball.setCenterY(ball.getCenterY() + ball.getYVel() * elapsedTime);
+//        System.out.println(ball.getCenterX() + ball.getXVel() * elapsedTime);
+//        System.out.println(ball.getCenterY() + ball.getYVel() * elapsedTime);
+    }
+
+    private void checkBlockCollision() {
+        if (paddle.getBoundsInParent().intersects(ball.getBoundsInParent())) {
+            ball.setYVel(-1 * ball.getYVel());
+        }
+
+    }
+
+    private void checkBorderCollision() {
+        if (ball.getCenterX() - RADIUS <= 0 || ball.getCenterX() + RADIUS >= WINDOWWIDTH) {
             ball.setXVel(-1 * ball.getXVel());
         } else if (ball.getCenterY() - RADIUS <= 0) {
             ball.setYVel(-1 * ball.getYVel());
-        } else { // goes below the screen
-//            ball.reset();
+        } else if (ball.getCenterY() > WINDOWHEIGHT + RADIUS) { // goes below the screen
+            reset();
         }
-        ball.setCenterX(ball.getCenterX() + ball.getXVel() * elapsedTime);
-        ball.setCenterY(ball.getCenterY() + ball.getYVel() * elapsedTime);
+    }
+
+    private void reset() {
+        ball.reset();
+        paddle.reset();
     }
 
     // What to do each time a key is pressed
     private void handleKeyInput (KeyCode code) {
-        if (code == KeyCode.LEFT) {
-            if (paddle.getX() >= 0) {
-              paddle.setX(paddle.getX() - 20);
-            }
-        }
-        else if (code == KeyCode.RIGHT) {
-            if (paddle.getX() + PADDLEWIDTH <= WINDOWWIDTH ) {
-              paddle.setX(paddle.getX() + 20);
+        if (ball.getCenterX() != ball.getOrigX() && ball.getCenterY() != ball.getOrigY()) {
+            if (code == KeyCode.LEFT) {
+                if (paddle.getX() >= 0) {
+                    paddle.setX(paddle.getX() - 20);
+                }
+            } else if (code == KeyCode.RIGHT) {
+                if (paddle.getX() + PADDLEWIDTH <= WINDOWWIDTH) {
+                    paddle.setX(paddle.getX() + 20);
+                }
             }
         }
     }
@@ -136,8 +156,8 @@ public class Game extends Application {
     // What to do each time a key is pressed
     private void handleMouseInput (double x, double y) {
         if (ball.getXVel() == 0 && ball.getYVel() == 0) {
-            ball.setXVel(-x);
-            ball.setYVel(-y);
+            ball.setXVel(x - WINDOWWIDTH/2);
+            ball.setYVel(-250);
         }
     }
 

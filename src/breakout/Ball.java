@@ -1,11 +1,12 @@
 package breakout;
 
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 
 public class Ball extends Circle {
 
+    private final int origX;
+    private final int origY;
     private int xPos;
     private int yPos;
     private Paint color;
@@ -17,9 +18,20 @@ public class Ball extends Circle {
         super(xPos, yPos, radius, color);
         this.xPos = xPos;
         this.yPos = yPos;
+        this.origX = xPos;
+        this.origY = yPos;
         this.radius = radius;
         this.color = color;
         setId("ball");
+    }
+
+    public void reset() {
+        xPos = origX;
+        yPos = origY;
+        setCenterX(xPos);
+        setCenterY(yPos);
+        xVel = 0;
+        yVel = 0;
     }
 
     public void setXVel(double value) {
@@ -36,6 +48,14 @@ public class Ball extends Circle {
 
     public double getYVel() {
         return yVel;
+    }
+
+    public double getOrigX() {
+        return origX;
+    }
+
+    public double getOrigY() {
+        return origY;
     }
 
 //    public void updatePosition() {

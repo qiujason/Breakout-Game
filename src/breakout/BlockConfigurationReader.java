@@ -29,7 +29,7 @@ public class BlockConfigurationReader {
         }
     }
 
-    public void loadLevel(Group root, int level) throws FileNotFoundException {
+    public Block[][] loadLevel(Group root, int level) throws FileNotFoundException {
         Block[][] gridOfBlocks = new Block[getRowNum(level)][getColNum(level)];
         readInBlocks(level, gridOfBlocks);
         for (Block[] row : gridOfBlocks){
@@ -37,8 +37,7 @@ public class BlockConfigurationReader {
                 root.getChildren().add(block);
             }
         }
-
-
+        return gridOfBlocks;
     }
 
     public int getRowNum(int level) throws FileNotFoundException {
