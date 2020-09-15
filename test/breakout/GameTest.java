@@ -92,12 +92,26 @@ class GameTest extends BreakoutApplicationTest {
         myBall.setXVel(-25);
         myBall.setYVel(-30);
 
-        myBall.setInMotion(true);
         for(int i=0; i < 4; i++){
             myGame.step(1);
         }
 
         assertEquals(myBall.getXVel(), 25);
         assertEquals(myBall.getYVel(), 30);
+    }
+
+    @Test
+    public void testBottomHit(){
+        myBall.setCenterX(100);
+        myBall.setCenterY(300);
+        myBall.setXVel(0);
+        myBall.setYVel(30);
+
+        for(int i=0; i < 12; i++){
+            myGame.step(1);
+        }
+
+        assertEquals(myBall.getOrigX(), myBall.getCenterX());
+        assertEquals(myBall.getOrigY(), myBall.getCenterY());
     }
 }

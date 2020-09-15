@@ -140,7 +140,6 @@ public class Game extends Application {
             ball.setYVel(-1 * ball.getYVel());
         } else if (ball.getCenterY() > WINDOWHEIGHT + RADIUS) { // goes below the screen
             reset();
-            ball.setInMotion(false);
         }
     }
 
@@ -176,7 +175,6 @@ public class Game extends Application {
         if (code == KeyCode.R) {
             paddle.reset();
             ball.reset();
-            ball.setInMotion(false);
         } else if (code == KeyCode.SPACE) {
             pause = !pause;
         }
@@ -187,7 +185,6 @@ public class Game extends Application {
         if (ball.getXVel() == 0 && ball.getYVel() == 0) {
             ball.setXVel(x - WINDOWWIDTH/2);
             ball.setYVel(-250);
-            ball.setInMotion(true);
         }
     }
 

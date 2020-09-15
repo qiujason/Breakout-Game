@@ -13,7 +13,6 @@ public class Ball extends Circle {
     private int radius;
     private double xVel = 0;
     private double yVel = 0;
-    private boolean inMotion = false;
 
     public Ball(int xPos, int yPos, int radius, Paint color){
         super(xPos, yPos, radius, color);
@@ -43,10 +42,6 @@ public class Ball extends Circle {
         yVel = value;
     }
 
-    public void setInMotion(boolean inMotion) {
-        this.inMotion = inMotion;
-    }
-
     public double getXVel() {
         return xVel;
     }
@@ -56,7 +51,7 @@ public class Ball extends Circle {
     }
 
     public boolean getInMotion() {
-        return inMotion;
+        return xVel != 0 && yVel != 0;
     }
 
     public double getOrigX() {
