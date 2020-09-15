@@ -67,28 +67,6 @@ public class Game extends Application {
         BlockConfigurationReader reader = new BlockConfigurationReader();
         gridOfBlocks = reader.loadLevel(root, 1);
 
-//        myRacer.setFill(RACER_COLOR);
-//        myRacer.setId("racer");
-        // x and y represent the top left corner, so center it in window
-//        myMover = new Rectangle(width / 2 - MOVER_SIZE / 2, height / 2 - VERTICAL_OFFSET, MOVER_SIZE, MOVER_SIZE);
-//        myMover.setArcWidth(MOVER_ROUNDING);
-//        myMover.setArcHeight(MOVER_ROUNDING);
-//        myMover.setFill(MOVER_COLOR);
-//        myMover.setId("mover");
-//        myGrower = new Rectangle(width / 2 - GROWER_SIZE / 2, height / 2 + VERTICAL_OFFSET, GROWER_SIZE, GROWER_SIZE);
-//        myGrower.setFill(GROWER_COLOR);
-//        myGrower.setId("grower");
-        // order added to the group is the order in which they are drawn (so last one is on top)
-//        root.getChildren().add(ball);
-//        root.getChildren().add(paddle);
-////        root.getChildren().add(singleHitBlock);
-//        for (Block[] blockRow : gridOfBlocks) {
-//            for (Block block : blockRow) {
-//                root.getChildren().add(block);
-//            }
-//        }
-//        root.getChildren().add(myGrower);
-//        root.getChildren().add(myRacer);
         // create a place to see the shapes
         Scene scene = new Scene(root, width, height, background);
         // respond to input
@@ -97,10 +75,6 @@ public class Game extends Application {
         return scene;
     }
 
-    // Handle the game's "rules" for every "moment":
-    // - movement, how do things change over time
-    // - collisions, did things intersect and, if so, what should happen
-    // - goals, did the game or level end?
     void step (double elapsedTime) {
         // update "actors" attributes
         if (!pause) {
@@ -116,21 +90,12 @@ public class Game extends Application {
         checkBorderCollision();
         ball.setCenterX(ball.getCenterX() + ball.getXVel() * elapsedTime);
         ball.setCenterY(ball.getCenterY() + ball.getYVel() * elapsedTime);
-//        System.out.println(ball.getCenterX() + ball.getXVel() * elapsedTime);
-//        System.out.println(ball.getCenterY() + ball.getYVel() * elapsedTime);
     }
 
     private void checkBlockCollision() {
         if (paddle.getBoundsInParent().intersects(ball.getBoundsInParent())) {
             ball.setYVel(-1 * ball.getYVel());
         }
-//        for (Block[] row : gridOfBlocks) {
-//            for (Block block : row) {
-//                if (ball.getBoundsInParent().intersects(block.getBoundsInParent())) {
-//                    ball.
-//                }
-//            }
-//        }
     }
 
     private void checkBorderCollision() {
