@@ -27,6 +27,7 @@ public class Game extends Application {
     public static final int GAP = RADIUS * 2;
     public static final double BLOCKWIDTH = (WINDOWWIDTH - (NUMGRIDCOLUMNS + 1) * GAP) / (double)NUMGRIDCOLUMNS;
     public static final double BLOCKHEIGHT = ((double)WINDOWHEIGHT/2.5 - (NUMGRIDROWS + 1) * GAP) / (double)NUMGRIDROWS;
+    private static final double PADDLEDELTA = 20;
 
     private Scene myScene;
     private Paddle paddle;
@@ -60,7 +61,7 @@ public class Game extends Application {
         ball = new Ball(width / 2, height - RADIUS - (int)PADDLEHEIGHT - 1, RADIUS, Color.ORANGE);
         root.getChildren().add(ball);
 
-        paddle = new Paddle(width/2 - PADDLEWIDTH/2, height - PADDLEHEIGHT, PADDLEWIDTH, PADDLEHEIGHT, Color.RED); //TODO: Clean this
+        paddle = new Paddle(width/2 - PADDLEWIDTH/2, height - PADDLEHEIGHT, PADDLEWIDTH, PADDLEHEIGHT, PADDLEDELTA, Color.RED); //TODO: Clean this
         root.getChildren().add(paddle);
 
         BlockConfigurationReader reader = new BlockConfigurationReader();
@@ -139,6 +140,7 @@ public class Game extends Application {
             ball.setYVel(-1 * ball.getYVel());
         } else if (ball.getCenterY() > WINDOWHEIGHT + RADIUS) { // goes below the screen
             reset();
+            ball.setInMotion(false);
         }
     }
 
@@ -150,14 +152,18 @@ public class Game extends Application {
     // What to do each time a key is pressed
     private void handleKeyInput (KeyCode code) {
         cheatKeys(code);
-        if (ball.getCenterX() != ball.getOrigX() && ball.getCenterY() != ball.getOrigY()) {
-            if (code == KeyCode.LEFT) {
-                if (paddle.getX() >= 0) {
-                    paddle.setX(paddle.getX() - 20);
+        if (code == KeyCode.LEFT) {
+            if (paddle.getX() >= PADDLEDELTA) {
+                paddle.setX(paddle.getX() - PADDLEDELTA);
+                if (!ball.getInMotion()) {
+                    ball.setCenterX(ball.getCenterX() - PADDLEDELTA);
                 }
-            } else if (code == KeyCode.RIGHT) {
-                if (paddle.getX() + PADDLEWIDTH <= WINDOWWIDTH) {
-                    paddle.setX(paddle.getX() + 20);
+            }
+        } else if (code == KeyCode.RIGHT) {
+            if (paddle.getX() + PADDLEWIDTH <= WINDOWWIDTH - PADDLEDELTA) {
+                paddle.setX(paddle.getX() + PADDLEDELTA);
+                if (!ball.getInMotion()) {
+                    ball.setCenterX(ball.getCenterX() + PADDLEDELTA);
                 }
             }
         }
@@ -167,6 +173,7 @@ public class Game extends Application {
         if (code == KeyCode.R) {
             paddle.reset();
             ball.reset();
+            ball.setInMotion(false);
         } else if (code == KeyCode.SPACE) {
             pause = !pause;
         }
@@ -177,6 +184,7 @@ public class Game extends Application {
         if (ball.getXVel() == 0 && ball.getYVel() == 0) {
             ball.setXVel(x - WINDOWWIDTH/2);
             ball.setYVel(-250);
+            ball.setInMotion(true);
         }
     }
 
