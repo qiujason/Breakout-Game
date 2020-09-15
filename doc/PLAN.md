@@ -112,7 +112,7 @@ Key
 
    * Method
    
-        * Constructor that sets the number of hits it takes for the block to break,sets
+        * Method that sets the number of hits it takes for the block to break,sets
    the position of the block, and sets the color of the block
    
         * Getter for the position of the block
