@@ -4,11 +4,13 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
 public class Paddle extends Rectangle {
-    double origX;
-    double origY;
+    private final double origX;
+    private final double origY;
+    private final double delta;
 
-    public Paddle(double x, double y, double width, double height, Paint color) {
+    public Paddle(double x, double y, double width, double height, double delta, Paint color) {
         super(x, y, width, height);
+        this.delta = delta;
         origX = x;
         origY = y;
         setFill(color);
@@ -20,5 +22,13 @@ public class Paddle extends Rectangle {
     public void reset() {
         setX(origX);
         setY(origY);
+    }
+
+    public double getOrigX() {
+        return origX;
+    }
+
+    public double getOrigY() {
+        return origY;
     }
 }
