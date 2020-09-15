@@ -1,23 +1,12 @@
 package breakout;
 
-import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testfx.api.FxRobot;
-import org.testfx.framework.junit5.ApplicationTest;
-import org.testfx.util.WaitForAsyncUtils;
 import util.BreakoutApplicationTest;
-
 import java.io.FileNotFoundException;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -98,6 +87,21 @@ class GameTest extends BreakoutApplicationTest {
 
         assertEquals(myBall.getXVel(), 25);
         assertEquals(myBall.getYVel(), 30);
+    }
+
+    @Test
+    public void testPaddleHit(){
+        myBall.setCenterX(250);
+        myBall.setCenterY(300);
+        myBall.setXVel(0);
+        myBall.setYVel(-100);
+
+        for(int i=0; i < 4; i++){
+            myGame.step(1);
+        }
+
+        assertEquals(myBall.getXVel(), 0);
+        assertEquals(myBall.getYVel(), 100);
     }
 
     @Test
