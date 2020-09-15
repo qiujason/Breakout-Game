@@ -165,8 +165,9 @@ public class Game extends Application {
 
     private void cheatKeys(KeyCode code) {
         if (code == KeyCode.R) {
+            paddle.reset();
+            ball.reset();
         } else if (code == KeyCode.SPACE) {
-
             pause = !pause;
         }
     }
