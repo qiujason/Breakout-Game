@@ -150,6 +150,7 @@ public class Game extends Application {
     }
 
     // What to do each time a key is pressed
+
     private void handleKeyInput (KeyCode code) {
         cheatKeys(code);
         if (code == KeyCode.LEFT) {
