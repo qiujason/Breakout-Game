@@ -18,8 +18,6 @@ class GameTest extends BreakoutApplicationTest {
     private Paddle myPaddle;
     private Scene myScene;
 
-
-
     public void start(Stage stage) throws Exception {
         // attach scene to the stage and display it
         myScene = myGame.setupScene(Game.WINDOWWIDTH, Game.WINDOWHEIGHT, Game.BACKGROUND);
@@ -42,6 +40,12 @@ class GameTest extends BreakoutApplicationTest {
     }
 
     @Test
+    public void testInitialBallVelocity(){
+        assertEquals(0, myBall.getXVel());
+        assertEquals(0, myBall.getYVel());
+    }
+
+    @Test
     public void testInitialPaddlePosition(){
         assertEquals(200, myPaddle.getX());
         assertEquals(585, myPaddle.getY());
@@ -60,9 +64,6 @@ class GameTest extends BreakoutApplicationTest {
         assertTrue(myPaddle.getX() > originalPosition);
     }
 
-
-
-
     @Test
     public void testKeyBlocks() throws FileNotFoundException {
         Group root = new Group();
@@ -72,7 +73,6 @@ class GameTest extends BreakoutApplicationTest {
         assertEquals(20, gridOfBlocks[1][0].getX());
         assertEquals(64, gridOfBlocks[1][0].getY());
     }
-
 
     @Test
     public void testCornerHit(){
