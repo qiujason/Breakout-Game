@@ -1,10 +1,5 @@
 # Game Plan
-## NAMEs
-
-breaking generates more balls (or other ways of adding balls)
-moving blocks
-variations of blocks (change how much is needed to break)
-preset images
+## Jason Qiu Franklin Wu
 
 ### Breakout Variation Ideas
 
