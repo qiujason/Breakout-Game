@@ -31,12 +31,13 @@ public class Game extends Application {
     private Scene myScene;
     private Paddle paddle;
     private Ball ball;
+    private Block[][] gridOfBlocks;
+
+    public boolean pause = false;
 
     @Override
     public void start(Stage primaryStage) throws FileNotFoundException {
         // attach scene to the stage and display it
-//        Group root = new Group();
-//        myScene = new Scene(root, SIZE, SIZE, BACKGROUND);
 
         myScene = setupScene(WINDOWWIDTH, WINDOWHEIGHT, BACKGROUND);
         primaryStage.setScene(myScene);
@@ -63,7 +64,7 @@ public class Game extends Application {
         root.getChildren().add(paddle);
 
         BlockConfigurationReader reader = new BlockConfigurationReader();
-        reader.loadLevel(root, 1);
+        gridOfBlocks = reader.loadLevel(root, 1);
 
 //        myRacer.setFill(RACER_COLOR);
 //        myRacer.setId("racer");
@@ -101,7 +102,9 @@ public class Game extends Application {
     // - goals, did the game or level end?
     void step (double elapsedTime) {
         // update "actors" attributes
-        updateShapes(elapsedTime);
+        if (!pause) {
+            updateShapes(elapsedTime);
+        }
         // check for collisions (order may matter! and should be its own method if lots of kinds of collisions)
     }
 
@@ -120,7 +123,13 @@ public class Game extends Application {
         if (paddle.getBoundsInParent().intersects(ball.getBoundsInParent())) {
             ball.setYVel(-1 * ball.getYVel());
         }
-
+//        for (Block[] row : gridOfBlocks) {
+//            for (Block block : row) {
+//                if (ball.getBoundsInParent().intersects(block.getBoundsInParent())) {
+//                    ball.
+//                }
+//            }
+//        }
     }
 
     private void checkBorderCollision() {
@@ -140,6 +149,7 @@ public class Game extends Application {
 
     // What to do each time a key is pressed
     private void handleKeyInput (KeyCode code) {
+        cheatKeys(code);
         if (ball.getCenterX() != ball.getOrigX() && ball.getCenterY() != ball.getOrigY()) {
             if (code == KeyCode.LEFT) {
                 if (paddle.getX() >= 0) {
@@ -150,6 +160,14 @@ public class Game extends Application {
                     paddle.setX(paddle.getX() + 20);
                 }
             }
+        }
+    }
+
+    private void cheatKeys(KeyCode code) {
+        if (code == KeyCode.R) {
+        } else if (code == KeyCode.SPACE) {
+
+            pause = !pause;
         }
     }
 
