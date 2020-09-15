@@ -100,4 +100,21 @@ class GameTest extends BreakoutApplicationTest {
         assertEquals(myBall.getXVel(), 25);
         assertEquals(myBall.getYVel(), 30);
     }
+
+    @Test
+    public void testPaddleHit(){
+        myBall.setCenterX(250);
+        myBall.setCenterY(300);
+        myBall.setXVel(0);
+        myBall.setYVel(-100);
+
+        for(int i=0; i < 4; i++){
+            myGame.step(1);
+        }
+
+        assertEquals(myBall.getXVel(), 0);
+        assertEquals(myBall.getYVel(), 100);
+    }
+
+
 }
