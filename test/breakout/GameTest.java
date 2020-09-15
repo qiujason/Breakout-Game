@@ -1,9 +1,11 @@
 package breakout;
 
 import javafx.application.Platform;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -13,15 +15,20 @@ import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 import util.BreakoutApplicationTest;
+
+import java.io.FileNotFoundException;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameTest extends BreakoutApplicationTest {
     private final Game myGame = new Game();
+    private final BlockConfigurationReader reader = new BlockConfigurationReader();
+
     private Ball myBall;
     private Paddle myPaddle;
     private Scene myScene;
+
 
 
     public void start(Stage stage) throws Exception {
@@ -59,30 +66,23 @@ class GameTest extends BreakoutApplicationTest {
 
     @Test
     public void testPaddleMove(){
-        FxRobot robot = new FxRobot();
-
         double originalPosition = myPaddle.getOrigX();
-        System.out.println(myBall.getOrigX());
-        robot.clickOn();
-        sleep(1, TimeUnit.SECONDS);    // PAUSE: not typically recommended in tests
-        click(myScene, 200, 300);
-        sleep(1, TimeUnit.SECONDS);    // PAUSE: not typically recommended in tests
-        System.out.println(myBall.getOrigX());
         press(myScene, KeyCode.RIGHT);
-        sleep(1, TimeUnit.SECONDS);    // PAUSE: but useful when debugging to verify what is happening
-        System.out.println(myPaddle.getX());
-
         assertTrue(myPaddle.getX() > originalPosition);
     }
 
 
 
 
-
-
-
-
-
+    @Test
+    public void testKeyBlocks() throws FileNotFoundException {
+        Group root = new Group();
+        Block[][] gridOfBlocks = reader.loadLevel(root, 1);
+        assertEquals(20, gridOfBlocks[0][0].getX());
+        assertEquals(20, gridOfBlocks[0][0].getY());
+        assertEquals(20, gridOfBlocks[1][0].getX());
+        assertEquals(64, gridOfBlocks[1][0].getY());
+    }
 
 
     @Test
