@@ -248,7 +248,7 @@ public class Game extends Application {
             reset();
             Text winMessage = new Text(200,300, "You Passed This Level!");
             root.getChildren().add(winMessage);
-            System.out.println("here");
+            winMessage.setId("winMessage");
         }
     }
 
@@ -258,6 +258,7 @@ public class Game extends Application {
             reset();
             Text lossMessage = new Text(200,300, "You Ran Out Of Lives! You lost!");
             root.getChildren().add(lossMessage);
+            lossMessage.setId("lossMessage");
         }
     }
 

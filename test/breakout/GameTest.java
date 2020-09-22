@@ -141,18 +141,21 @@ class GameTest extends DukeApplicationTest {
 
     @Test
     public void testLevelClear(){
-        click(myScene, 200, 500);
-
-        javafxRun(() -> myGame.step(Game.SECOND_DELAY));
-
         press(myScene, KeyCode.C);
         javafxRun(() -> myGame.step(Game.SECOND_DELAY));
-
-
-        assertEquals(myBall.getOrigX(), myBall.getCenterX());
-        assertEquals(myBall.getOrigY(), myBall.getCenterY());
-
+        Text winMessage = lookup("#winMessage").query();
+        assertTrue(myScene.getRoot().getChildrenUnmodifiable().contains(winMessage));
     }
 
+    @Test
+    public void testLevelLost(){
+        for(int i=0; i < 30; i++){
+            click(myScene, 200, 500);
+            press(myScene, KeyCode.RIGHT);
+            javafxRun(() -> myGame.step(1));
+        }
+        Text lossMessage = lookup("#lossMessage").query();
+        assertTrue(myScene.getRoot().getChildrenUnmodifiable().contains(lossMessage));
+    }
 
 }
