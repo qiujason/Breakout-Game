@@ -129,9 +129,13 @@ class GameTest extends DukeApplicationTest {
         myBall.setCenterY(300);
         myBall.setXVel(0);
         myBall.setYVel(-250);
-        for (int i = 0; i < 100000; i++) {
 
+        for (int i = 0; i < 12; i++) {
+            javafxRun(() -> myGame.step(Game.SECOND_DELAY));
         }
+
+        assertEquals(myBall.getXVel(), 0);
+        assertEquals(myBall.getYVel(), 250);
     }
 
 
