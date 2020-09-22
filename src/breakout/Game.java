@@ -189,6 +189,17 @@ public class Game extends Application {
             ball.reset();
         } else if (code == KeyCode.SPACE) {
             pause = !pause;
+        } else if (code == KeyCode.L) {
+            livesDisplay.addLife();
+        } else if (code == KeyCode.P) {
+
+        } else if (code == KeyCode.C) {
+            for (int i = 0; i < gridOfBlocks.length; i++) {
+                for (int j = 0; j < gridOfBlocks[0].length; j++) {
+                    gridOfBlocks[i][j].setLives(0);
+                    root.getChildren().remove(gridOfBlocks[i][j]);
+                }
+            }
         }
     }
 
