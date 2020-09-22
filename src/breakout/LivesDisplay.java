@@ -21,7 +21,12 @@ public class LivesDisplay extends Text {
     }
 
     public void subtractLife(){
-        setLives(getLives() - 1);
+        setLives(lives - 1);
+        updateDisplay();
+    }
+
+    public void addLife() {
+        setLives(lives + 1);
         updateDisplay();
     }
 

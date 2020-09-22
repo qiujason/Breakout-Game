@@ -7,7 +7,7 @@ public class ScoreDisplay extends Text {
     private int bonus;
     private final int POINT_VALUE = 100;
     private final int START_BONUS = 10;
-    private final double BONUS_MULTIPLIER = 1.5;
+    private final double BONUS_MULTIPLIER = 2;
 
     public ScoreDisplay(int x, int y) {
         super("Score: " + 0);
@@ -27,9 +27,13 @@ public class ScoreDisplay extends Text {
         setText("Score: " + score);
     }
 
+    public void resetBonus() {
+        bonus = START_BONUS;
+    }
+
     public void resetScore() {
         score = 0;
-        bonus = START_BONUS;
+        resetBonus();
     }
 
     public int getScore() {

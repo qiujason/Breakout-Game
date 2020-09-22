@@ -119,4 +119,15 @@ class GameTest extends DukeApplicationTest {
         assertEquals(myBall.getOrigX(), myBall.getCenterX());
         assertEquals(myBall.getOrigY(), myBall.getCenterY());
     }
+
+    @Test
+    public void testBallHitBounces() {
+        myBall.setCenterX(50);
+        myBall.setCenterY(300);
+        myBall.setXVel(0);
+        myBall.setYVel(-250);
+        for (int i = 0; i < 100000; i++) {
+
+        }
+    }
 }
