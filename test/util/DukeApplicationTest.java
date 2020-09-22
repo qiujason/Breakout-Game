@@ -117,7 +117,7 @@ public class DukeApplicationTest extends ApplicationTest {
         javafxRun(action);
     }
 
-    private void javafxRun (Runnable action) {
+    protected void javafxRun(Runnable action) {
         // fire event using given action on the given node
         Platform.runLater(action);
         // make it "later" so the requested event has time to run
