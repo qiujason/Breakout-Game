@@ -29,12 +29,20 @@ public class Game extends Application {
     public static final double BLOCKWIDTH = (WINDOWWIDTH - (NUMGRIDCOLUMNS + 1) * GAP) / (double)NUMGRIDCOLUMNS;
     public static final double BLOCKHEIGHT = ((double)WINDOWHEIGHT/2.5 - (NUMGRIDROWS + 1) * GAP) / (double)NUMGRIDROWS;
     private static final double PADDLEDELTA = 20;
+    private static final int LIVES = 3;
+    private static final int LIVES_DISPLAY_XPOS = 20;
+    private static final int LIVES_DISPLAY_YPOS = 15;
+    public static final double DISPLAYHEIGHT = 18;
+    private static final int SCORE_DISPLAY_XPOS = WINDOWWIDTH - 65;
+    private static final int SCORE_DISPLAY_YPOS = 15;
 
     private Scene myScene;
     private Group root;
     private Paddle paddle;
     private Ball ball;
     private Block[][] gridOfBlocks;
+    private ScoreDisplay scoreDisplay;
+    private LivesDisplay livesDisplay;
 
     public boolean pause = false;
 
@@ -67,11 +75,25 @@ public class Game extends Application {
         BlockConfigurationReader reader = new BlockConfigurationReader();
         gridOfBlocks = reader.loadLevel(root, 1);
 
+        setUpDisplay(root);
+
         Scene scene = new Scene(root, width, height, background);
 
         scene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
         scene.setOnMouseClicked(e -> handleMouseInput(e.getX(), e.getY()));
         return scene;
+    }
+
+    private void setUpDisplay(Group root) {
+        Rectangle display = new Rectangle(WINDOWWIDTH, DISPLAYHEIGHT);
+        display.setFill(Color.LIGHTGREY);
+        root.getChildren().add(display);
+
+        livesDisplay = new LivesDisplay(LIVES, LIVES_DISPLAY_XPOS, LIVES_DISPLAY_YPOS);
+        root.getChildren().add(livesDisplay);
+
+        scoreDisplay = new ScoreDisplay(SCORE_DISPLAY_XPOS, SCORE_DISPLAY_YPOS);
+        root.getChildren().add(scoreDisplay);
     }
 
     void step (double elapsedTime) {
@@ -104,7 +126,7 @@ public class Game extends Application {
     private void checkBorderCollision() {
         if (ball.getCenterX() - RADIUS <= 0 || ball.getCenterX() + RADIUS >= WINDOWWIDTH) {
             ball.setXVel(-1 * ball.getXVel());
-        } else if (ball.getCenterY() - RADIUS <= 0) {
+        } else if (ball.getCenterY() - RADIUS <= DISPLAYHEIGHT) {
             ball.setYVel(-1 * ball.getYVel());
         } else if (ball.getCenterY() > WINDOWHEIGHT + RADIUS) { // goes below the screen
             reset();
@@ -125,6 +147,7 @@ public class Game extends Application {
                     if (gridOfBlocks[i][j].getLives() == 0){
                         root.getChildren().remove(gridOfBlocks[i][j]);
                     }
+                    scoreDisplay.setScore(scoreDisplay.getScore() + 100);
                 }
 
             }
