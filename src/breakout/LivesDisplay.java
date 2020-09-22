@@ -12,7 +12,20 @@ public class LivesDisplay extends Text {
         setY(y);
     }
 
-    public int getLives() {
+    public int getLives(){
         return lives;
+    }
+
+    public void setLives(int lives){
+        this.lives = lives;
+    }
+
+    public void subtractLife(){
+        setLives(getLives() - 1);
+        updateDisplay();
+    }
+
+    private void updateDisplay() {
+        setText("Lives: " + lives);
     }
 }

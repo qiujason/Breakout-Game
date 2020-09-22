@@ -31,4 +31,10 @@ public class Block extends Rectangle {
     public void setLives(int lives){
         this.lives = lives;
     }
+
+    public void subtractLife(){
+        setLives(getLives() - 1);
+        setFill(determineColor());
+    }
+
 }

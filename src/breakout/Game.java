@@ -8,6 +8,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -100,9 +101,8 @@ public class Game extends Application {
         if (!pause) {
             updateShapes(elapsedTime);
         }
-        if (checkWin()){
-            pause = true;
-        }
+        checkWin();
+        checkLoss();
     }
 
     private void updateShapes (double elapsedTime) {
@@ -130,6 +130,7 @@ public class Game extends Application {
             ball.setYVel(-1 * ball.getYVel());
         } else if (ball.getCenterY() > WINDOWHEIGHT + RADIUS) { // goes below the screen
             reset();
+            livesDisplay.subtractLife();
         }
     }
 
@@ -143,7 +144,7 @@ public class Game extends Application {
                     } else if (intersectLeft(b) || intersectRight(b)) {
                         ball.setXVel(-1 * ball.getXVel());
                     }
-                    subtractLife(gridOfBlocks[i][j]);
+                    gridOfBlocks[i][j].subtractLife();
                     if (gridOfBlocks[i][j].getLives() == 0){
                         root.getChildren().remove(gridOfBlocks[i][j]);
                     }
@@ -215,12 +216,7 @@ public class Game extends Application {
         return ball.getCenterX() - RADIUS <= b.getY() + b.getArcWidth();
     }
 
-    private void subtractLife(Block b){
-       b.setLives(b.getLives() - 1);
-       b.setFill(b.determineColor());
-    }
-
-    private boolean checkWin(){
+    private boolean hasWon(){
         for(Block[] row : gridOfBlocks){
             for (Block b : row){
                 if (b.getLives() != 0){
@@ -229,6 +225,28 @@ public class Game extends Application {
             }
         }
         return true;
+    }
+
+    private boolean hasLost(){
+        return livesDisplay.getLives() == 0;
+    }
+
+    public void checkWin(){
+        if (hasWon()){
+            pause = true;
+            reset();
+            Text winMessage = new Text(200,300, "You Passed This Level!");
+            root.getChildren().add(winMessage);
+        }
+    }
+
+    public void checkLoss(){
+        if (hasLost()){
+            pause = true;
+            reset();
+            Text winMessage = new Text(200,300, "You Ran Out Of Lives! You lost!");
+            root.getChildren().add(winMessage);
+        }
     }
 
 
