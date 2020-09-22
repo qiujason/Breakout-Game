@@ -42,7 +42,7 @@ public class Game extends Application {
     private Paddle paddle;
     private Ball ball;
     private Block[][] gridOfBlocks;
-    private ScoreDisplay scoreDisplay;
+    public ScoreDisplay scoreDisplay;
     private LivesDisplay livesDisplay;
 
     public boolean pause = false;
@@ -150,7 +150,6 @@ public class Game extends Application {
                     }
                     scoreDisplay.addScore();
                 }
-
             }
         }
     }

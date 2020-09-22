@@ -134,4 +134,35 @@ class GameTest extends DukeApplicationTest {
         assertEquals(myBall.getXVel(), 0);
         assertEquals(myBall.getYVel(), 250);
     }
+
+    @Test
+    public void testBallHitUpdateScore() {
+        myBall.setCenterX(50);
+        myBall.setCenterY(300);
+        myBall.setXVel(0);
+        myBall.setYVel(-250);
+
+        for (int i = 0; i < 12; i++) {
+            javafxRun(() -> myGame.step(Game.SECOND_DELAY));
+        }
+
+        assertEquals(myGame.scoreDisplay.getScore(), 110);
+    }
+
+    @Test
+    public void testBallHitDeleteBlock() {
+        myBall.setCenterX(50);
+        myBall.setCenterY(300);
+        myBall.setXVel(0);
+        myBall.setYVel(-250);
+
+        for (int i = 0; i < 12; i++) {
+            javafxRun(() -> myGame.step(Game.SECOND_DELAY));
+        }
+
+        Exception e = assertThrows(Exception.class, () -> lookup("#block40").query());
+        assertEquals("there is no node in the scene-graph matching the query: NodeQuery: from nodes: [Group@5eea8007[styleClass=root]],\n" +
+                "lookup by function: \"org.testfx.util.NodeQueryUtils$$Lambda$416/0x0000000800d09c40@8e0379d\",\n" +
+                "lookup by selector: \"#block40\"", e.getMessage());
+    }
 }

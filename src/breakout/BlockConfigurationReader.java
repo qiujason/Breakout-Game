@@ -35,7 +35,7 @@ public class BlockConfigurationReader {
             for (int j = 0; j < gridOfBlocks[i].length; j++){
                 Block block = gridOfBlocks[i][j];
                 if (block.getLives() > 0){
-                    block.setId("block " + i + " " + j);
+                    block.setId("block" + i + j);
                     root.getChildren().add(block);
                 }
             }
