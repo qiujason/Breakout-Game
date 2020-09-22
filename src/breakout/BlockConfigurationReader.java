@@ -21,7 +21,7 @@ public class BlockConfigurationReader {
             String[] blockLives = scanner.nextLine().split(" ");
             for(int i = 0; i < gridOfBlocks[row].length; i++){
                 double xPos = i * (BLOCKWIDTH + GAP) + GAP;
-                double yPos = row * (BLOCKHEIGHT + GAP) + GAP;
+                double yPos = row * (BLOCKHEIGHT + GAP) + GAP + DISPLAYHEIGHT;
                 gridOfBlocks[row][i] = new Block(xPos, yPos, BLOCKWIDTH, BLOCKHEIGHT, Integer.parseInt(blockLives[i]));
             }
             row++;

@@ -1,6 +1,8 @@
 package breakout;
 
-public class LivesDisplay extends Display {
+import javafx.scene.text.Text;
+
+public class LivesDisplay extends Text {
     int lives;
 
     public LivesDisplay(int lives, int x, int y) {

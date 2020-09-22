@@ -32,7 +32,7 @@ public class Game extends Application {
     private static final int LIVES = 3;
     private static final int LIVES_DISPLAY_XPOS = 20;
     private static final int LIVES_DISPLAY_YPOS = 15;
-    private static final double DISPLAYHEIGHT = 18;
+    public static final double DISPLAYHEIGHT = 18;
     private static final int SCORE_DISPLAY_XPOS = WINDOWWIDTH - 65;
     private static final int SCORE_DISPLAY_YPOS = 15;
 
@@ -41,6 +41,8 @@ public class Game extends Application {
     private Paddle paddle;
     private Ball ball;
     private Block[][] gridOfBlocks;
+    private ScoreDisplay scoreDisplay;
+    private LivesDisplay livesDisplay;
 
     public boolean pause = false;
 
@@ -87,10 +89,10 @@ public class Game extends Application {
         display.setFill(Color.LIGHTGREY);
         root.getChildren().add(display);
 
-        LivesDisplay livesDisplay = new LivesDisplay(LIVES, LIVES_DISPLAY_XPOS, LIVES_DISPLAY_YPOS);
+        livesDisplay = new LivesDisplay(LIVES, LIVES_DISPLAY_XPOS, LIVES_DISPLAY_YPOS);
         root.getChildren().add(livesDisplay);
 
-        ScoreDisplay scoreDisplay = new ScoreDisplay(SCORE_DISPLAY_XPOS, SCORE_DISPLAY_YPOS);
+        scoreDisplay = new ScoreDisplay(SCORE_DISPLAY_XPOS, SCORE_DISPLAY_YPOS);
         root.getChildren().add(scoreDisplay);
     }
 
@@ -142,6 +144,7 @@ public class Game extends Application {
                     if (gridOfBlocks[i][j].getLives() == 0){
                         root.getChildren().remove(gridOfBlocks[i][j]);
                     }
+                    scoreDisplay.setScore(scoreDisplay.getScore() + 100);
                 }
 
             }
