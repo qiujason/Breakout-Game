@@ -22,10 +22,7 @@ public class BlockConfigurationReader {
             for(int i = 0; i < gridOfBlocks[row].length; i++){
                 double xPos = i * (BLOCKWIDTH + GAP) + GAP;
                 double yPos = row * (BLOCKHEIGHT + GAP) + GAP;
-                if (Integer.parseInt(blockLives[i]) >0){
-                    gridOfBlocks[row][i] = new HitBlock(xPos, yPos, BLOCKWIDTH, BLOCKHEIGHT, Integer.parseInt(blockLives[i]));
-
-                }
+                gridOfBlocks[row][i] = new Block(xPos, yPos, BLOCKWIDTH, BLOCKHEIGHT, Integer.parseInt(blockLives[i]));
             }
             row++;
         }
@@ -36,13 +33,25 @@ public class BlockConfigurationReader {
         readInBlocks(level, gridOfBlocks);
         for (Block[] row : gridOfBlocks){
             for (Block block : row){
-                if (block != null){
+                if (block.getLives() > 0){
                     root.getChildren().add(block);
                 }
             }
         }
         return gridOfBlocks;
     }
+
+    public Block[][] loadLevelFromExisting(Group root, Block[][] gridOfBlocks){
+        for (Block[] row : gridOfBlocks){
+            for (Block block : row){
+                if (block.getLives() > 0){
+                    root.getChildren().add(block);
+                }
+            }
+        }
+        return gridOfBlocks;
+    }
+
 
     public int getRowNum(int level) throws FileNotFoundException {
         String filePath = directory + "level" + level + ".txt";

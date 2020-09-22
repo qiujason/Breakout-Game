@@ -25,7 +25,7 @@ public class Game extends Application {
     public static final int NUMGRIDROWS = 5;
     private static final double PADDLEWIDTH = 100;
     private static final double PADDLEHEIGHT = 15;
-    public static final int GAP = RADIUS * 2;
+    public static final int GAP = RADIUS;
     public static final double BLOCKWIDTH = (WINDOWWIDTH - (NUMGRIDCOLUMNS + 1) * GAP) / (double)NUMGRIDCOLUMNS;
     public static final double BLOCKHEIGHT = ((double)WINDOWHEIGHT/2.5 - (NUMGRIDROWS + 1) * GAP) / (double)NUMGRIDROWS;
     private static final double PADDLEDELTA = 20;
@@ -37,6 +37,7 @@ public class Game extends Application {
     private static final int SCORE_DISPLAY_YPOS = 15;
 
     private Scene myScene;
+    private Group root;
     private Paddle paddle;
     private Ball ball;
     private Block[][] gridOfBlocks;
@@ -61,7 +62,7 @@ public class Game extends Application {
     }
 
     public Scene setupScene(int width, int height, Paint background) throws FileNotFoundException {
-        Group root = new Group();
+        root = new Group();
 
         ball = new Ball(width / 2, height - RADIUS - (int)PADDLEHEIGHT - 1, RADIUS, Color.ORANGE);
         root.getChildren().add(ball);
@@ -109,7 +110,11 @@ public class Game extends Application {
 
     private void checkPaddleCollision() {
         if (paddle.getBoundsInParent().intersects(ball.getBoundsInParent())) {
-            ball.setYVel(-1 * ball.getYVel());
+            if (intersectBottom(paddle) || intersectTop(paddle)) {
+                ball.setYVel(-1 * ball.getYVel());
+            } else if (intersectLeft(paddle) || intersectRight(paddle)) {
+                ball.setXVel(-1 * ball.getXVel());
+            }
         }
     }
 
@@ -124,16 +129,21 @@ public class Game extends Application {
     }
 
     private void checkBlockCollision(){
-        for (Block[] row : gridOfBlocks){
-            for (Block b : row){
-                if (b != null && b.getBoundsInParent().intersects(ball.getBoundsInParent())) {
-                    if (intersectBottom(b) || intersectTop(b)){
+        for (int i = 0; i < gridOfBlocks.length; i++){
+            for (int j = 0; j < gridOfBlocks[0].length; j++){
+                Block b = gridOfBlocks[i][j];
+                if (b.getLives() > 0 && b.getBoundsInParent().intersects(ball.getBoundsInParent())) {
+                    if (intersectBottom(b) || intersectTop(b)) {
                         ball.setYVel(-1 * ball.getYVel());
-                    }
-                    else if (intersectLeft(b) || intersectRight(b)){
+                    } else if (intersectLeft(b) || intersectRight(b)) {
                         ball.setXVel(-1 * ball.getXVel());
                     }
+                    subtractLife(gridOfBlocks[i][j]);
+                    if (gridOfBlocks[i][j].getLives() == 0){
+                        root.getChildren().remove(gridOfBlocks[i][j]);
+                    }
                 }
+
             }
         }
     }
@@ -183,22 +193,26 @@ public class Game extends Application {
         }
     }
 
-    private boolean intersectBottom(Block b){
+    private boolean intersectBottom(Rectangle b){
         return ball.getCenterY() + RADIUS >= b.getY() - b.getArcHeight();
     }
 
-    private boolean intersectTop (Block b){
+    private boolean intersectTop (Rectangle b){
         return ball.getCenterY() - RADIUS <= b.getY();
     }
 
-    private boolean intersectLeft(Block b){
+    private boolean intersectLeft(Rectangle b){
         return ball.getCenterX() + RADIUS >= b.getX();
     }
 
-    private boolean intersectRight(Block b){
+    private boolean intersectRight(Rectangle b){
         return ball.getCenterX() - RADIUS <= b.getY() + b.getArcWidth();
     }
 
+    private void subtractLife(Block b){
+       b.setLives(b.getLives() - 1);
+       b.setFill(b.determineColor());
+    }
 
     public static void main (String[] args) {
         launch(args);
