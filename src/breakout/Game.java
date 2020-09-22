@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -24,15 +26,24 @@ public class Game extends Application {
     public static final int NUMGRIDROWS = 5;
     private static final double PADDLEWIDTH = 100;
     private static final double PADDLEHEIGHT = 15;
-    public static final int GAP = RADIUS * 2;
+    public static final int GAP = RADIUS;
     public static final double BLOCKWIDTH = (WINDOWWIDTH - (NUMGRIDCOLUMNS + 1) * GAP) / (double)NUMGRIDCOLUMNS;
     public static final double BLOCKHEIGHT = ((double)WINDOWHEIGHT/2.5 - (NUMGRIDROWS + 1) * GAP) / (double)NUMGRIDROWS;
     private static final double PADDLEDELTA = 20;
+    private static final int LIVES = 3;
+    private static final int LIVES_DISPLAY_XPOS = 20;
+    private static final int LIVES_DISPLAY_YPOS = 15;
+    public static final double DISPLAYHEIGHT = 18;
+    private static final int SCORE_DISPLAY_XPOS = WINDOWWIDTH - 65;
+    private static final int SCORE_DISPLAY_YPOS = 15;
 
     private Scene myScene;
+    private Group root;
     private Paddle paddle;
     private Ball ball;
     private Block[][] gridOfBlocks;
+    public ScoreDisplay scoreDisplay;
+    private LivesDisplay livesDisplay;
 
     public boolean pause = false;
 
@@ -54,10 +65,8 @@ public class Game extends Application {
     }
 
     public Scene setupScene(int width, int height, Paint background) throws FileNotFoundException {
-        // create one top level collection to organize the things in the scene
-        Group root = new Group();
+        root = new Group();
 
-        // make some shapes and set their properties
         ball = new Ball(width / 2, height - RADIUS - (int)PADDLEHEIGHT - 1, RADIUS, Color.ORANGE);
         root.getChildren().add(ball);
 
@@ -67,44 +76,81 @@ public class Game extends Application {
         BlockConfigurationReader reader = new BlockConfigurationReader();
         gridOfBlocks = reader.loadLevel(root, 1);
 
-        // create a place to see the shapes
+        setUpDisplay(root);
+
         Scene scene = new Scene(root, width, height, background);
-        // respond to input
+
         scene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
         scene.setOnMouseClicked(e -> handleMouseInput(e.getX(), e.getY()));
         return scene;
     }
 
+    private void setUpDisplay(Group root) {
+        Rectangle display = new Rectangle(WINDOWWIDTH, DISPLAYHEIGHT);
+        display.setFill(Color.LIGHTGREY);
+        root.getChildren().add(display);
+
+        livesDisplay = new LivesDisplay(LIVES, LIVES_DISPLAY_XPOS, LIVES_DISPLAY_YPOS);
+        root.getChildren().add(livesDisplay);
+
+        scoreDisplay = new ScoreDisplay(SCORE_DISPLAY_XPOS, SCORE_DISPLAY_YPOS);
+        root.getChildren().add(scoreDisplay);
+    }
+
     void step (double elapsedTime) {
-        // update "actors" attributes
         if (!pause) {
             updateShapes(elapsedTime);
         }
-        // check for collisions (order may matter! and should be its own method if lots of kinds of collisions)
+        checkWin();
+        checkLoss();
     }
 
-    // Change properties of shapes in small ways to animate them over time
     private void updateShapes (double elapsedTime) {
-        // there are more sophisticated ways to animate shapes, but these simple ways work fine to start
-        checkBlockCollision();
+        checkPaddleCollision();
         checkBorderCollision();
+        checkBlockCollision();
         ball.setCenterX(ball.getCenterX() + ball.getXVel() * elapsedTime);
         ball.setCenterY(ball.getCenterY() + ball.getYVel() * elapsedTime);
     }
 
-    private void checkBlockCollision() {
+    private void checkPaddleCollision() {
         if (paddle.getBoundsInParent().intersects(ball.getBoundsInParent())) {
-            ball.setYVel(-1 * ball.getYVel());
+            if (intersectBottom(paddle) || intersectTop(paddle)) {
+                ball.setYVel(-1 * ball.getYVel());
+            } else if (intersectLeft(paddle) || intersectRight(paddle)) {
+                ball.setXVel(-1 * ball.getXVel());
+            }
         }
     }
 
     private void checkBorderCollision() {
         if (ball.getCenterX() - RADIUS <= 0 || ball.getCenterX() + RADIUS >= WINDOWWIDTH) {
             ball.setXVel(-1 * ball.getXVel());
-        } else if (ball.getCenterY() - RADIUS <= 0) {
+        } else if (ball.getCenterY() - RADIUS <= DISPLAYHEIGHT) {
             ball.setYVel(-1 * ball.getYVel());
         } else if (ball.getCenterY() > WINDOWHEIGHT + RADIUS) { // goes below the screen
             reset();
+            livesDisplay.subtractLife();
+        }
+    }
+
+    private void checkBlockCollision(){
+        for (int i = 0; i < gridOfBlocks.length; i++){
+            for (int j = 0; j < gridOfBlocks[0].length; j++){
+                Block b = gridOfBlocks[i][j];
+                if (b.getLives() > 0 && b.getBoundsInParent().intersects(ball.getBoundsInParent())) {
+                    if (intersectBottom(b) || intersectTop(b)) {
+                        ball.setYVel(-1 * ball.getYVel());
+                    } else if (intersectLeft(b) || intersectRight(b)) {
+                        ball.setXVel(-1 * ball.getXVel());
+                    }
+                    gridOfBlocks[i][j].subtractLife();
+                    if (gridOfBlocks[i][j].getLives() == 0){
+                        root.getChildren().remove(gridOfBlocks[i][j]);
+                    }
+                    scoreDisplay.addScore();
+                }
+            }
         }
     }
 
@@ -142,6 +188,17 @@ public class Game extends Application {
             ball.reset();
         } else if (code == KeyCode.SPACE) {
             pause = !pause;
+        } else if (code == KeyCode.L) {
+            livesDisplay.addLife();
+        } else if (code == KeyCode.P) {
+
+        } else if (code == KeyCode.C) {
+            for (int i = 0; i < gridOfBlocks.length; i++) {
+                for (int j = 0; j < gridOfBlocks[0].length; j++) {
+                    gridOfBlocks[i][j].setLives(0);
+                    root.getChildren().remove(gridOfBlocks[i][j]);
+                }
+            }
         }
     }
 
@@ -152,6 +209,58 @@ public class Game extends Application {
             ball.setYVel(-250);
         }
     }
+
+    private boolean intersectBottom(Rectangle b){
+        return ball.getCenterY() + RADIUS >= b.getY() - b.getArcHeight();
+    }
+
+    private boolean intersectTop (Rectangle b){
+        return ball.getCenterY() - RADIUS <= b.getY();
+    }
+
+    private boolean intersectLeft(Rectangle b){
+        return ball.getCenterX() + RADIUS >= b.getX();
+    }
+
+    private boolean intersectRight(Rectangle b){
+        return ball.getCenterX() - RADIUS <= b.getY() + b.getArcWidth();
+    }
+
+    private boolean hasWon(){
+        for(Block[] row : gridOfBlocks){
+            for (Block b : row){
+                if (b.getLives() != 0){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean hasLost(){
+        return livesDisplay.getLives() == 0;
+    }
+
+    public void checkWin(){
+        if (hasWon()){
+            pause = true;
+            reset();
+            Text winMessage = new Text(200,300, "You Passed This Level!");
+            root.getChildren().add(winMessage);
+            winMessage.setId("winMessage");
+        }
+    }
+
+    public void checkLoss(){
+        if (hasLost()){
+            pause = true;
+            reset();
+            Text lossMessage = new Text(200,300, "You Ran Out Of Lives! You lost!");
+            root.getChildren().add(lossMessage);
+            lossMessage.setId("lossMessage");
+        }
+    }
+
 
     public static void main (String[] args) {
         launch(args);

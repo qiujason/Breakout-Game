@@ -4,7 +4,6 @@ import javafx.scene.Group;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 import java.util.Scanner;
 
 import static breakout.Game.*;
@@ -22,8 +21,8 @@ public class BlockConfigurationReader {
             String[] blockLives = scanner.nextLine().split(" ");
             for(int i = 0; i < gridOfBlocks[row].length; i++){
                 double xPos = i * (BLOCKWIDTH + GAP) + GAP;
-                double yPos = row * (BLOCKHEIGHT + GAP) + GAP;
-                gridOfBlocks[row][i] = new SingleHitBlock(xPos, yPos, BLOCKWIDTH, BLOCKHEIGHT, Integer.parseInt(blockLives[i]));
+                double yPos = row * (BLOCKHEIGHT + GAP) + GAP + DISPLAYHEIGHT;
+                gridOfBlocks[row][i] = new Block(xPos, yPos, BLOCKWIDTH, BLOCKHEIGHT, Integer.parseInt(blockLives[i]));
             }
             row++;
         }
@@ -32,13 +31,29 @@ public class BlockConfigurationReader {
     public Block[][] loadLevel(Group root, int level) throws FileNotFoundException {
         Block[][] gridOfBlocks = new Block[getRowNum(level)][getColNum(level)];
         readInBlocks(level, gridOfBlocks);
-        for (Block[] row : gridOfBlocks){
-            for (Block block : row){
-                root.getChildren().add(block);
+        for (int i = 0; i < gridOfBlocks.length; i++) {
+            for (int j = 0; j < gridOfBlocks[i].length; j++){
+                Block block = gridOfBlocks[i][j];
+                if (block.getLives() > 0){
+                    block.setId("block" + i + j);
+                    root.getChildren().add(block);
+                }
             }
         }
         return gridOfBlocks;
     }
+
+    public Block[][] loadLevelFromExisting(Group root, Block[][] gridOfBlocks){
+        for (Block[] row : gridOfBlocks){
+            for (Block block : row){
+                if (block.getLives() > 0){
+                    root.getChildren().add(block);
+                }
+            }
+        }
+        return gridOfBlocks;
+    }
+
 
     public int getRowNum(int level) throws FileNotFoundException {
         String filePath = directory + "level" + level + ".txt";

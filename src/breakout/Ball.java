@@ -62,9 +62,4 @@ public class Ball extends Circle {
         return origY;
     }
 
-//    public void updatePosition() {
-//        double distance = Math.sqrt(xPos * xPos + yPos * yPos);
-//        xPos += xVel / distance;
-//        yPos += yVel / distance;
-//    }
 }
