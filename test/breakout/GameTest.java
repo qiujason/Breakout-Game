@@ -5,12 +5,13 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
-import util.BreakoutApplicationTest;
+import util.DukeApplicationTest;
+
 import java.io.FileNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class GameTest extends BreakoutApplicationTest {
+class GameTest extends DukeApplicationTest {
     private final Game myGame = new Game();
     private final BlockConfigurationReader reader = new BlockConfigurationReader();
 

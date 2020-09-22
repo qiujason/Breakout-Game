@@ -4,7 +4,6 @@ import javafx.scene.Group;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 import java.util.Scanner;
 
 import static breakout.Game.*;
@@ -23,7 +22,10 @@ public class BlockConfigurationReader {
             for(int i = 0; i < gridOfBlocks[row].length; i++){
                 double xPos = i * (BLOCKWIDTH + GAP) + GAP;
                 double yPos = row * (BLOCKHEIGHT + GAP) + GAP;
-                gridOfBlocks[row][i] = new SingleHitBlock(xPos, yPos, BLOCKWIDTH, BLOCKHEIGHT, Integer.parseInt(blockLives[i]));
+                if (Integer.parseInt(blockLives[i]) >0){
+                    gridOfBlocks[row][i] = new HitBlock(xPos, yPos, BLOCKWIDTH, BLOCKHEIGHT, Integer.parseInt(blockLives[i]));
+
+                }
             }
             row++;
         }
@@ -34,7 +36,9 @@ public class BlockConfigurationReader {
         readInBlocks(level, gridOfBlocks);
         for (Block[] row : gridOfBlocks){
             for (Block block : row){
-                root.getChildren().add(block);
+                if (block != null){
+                    root.getChildren().add(block);
+                }
             }
         }
         return gridOfBlocks;

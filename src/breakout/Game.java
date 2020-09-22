@@ -54,10 +54,8 @@ public class Game extends Application {
     }
 
     public Scene setupScene(int width, int height, Paint background) throws FileNotFoundException {
-        // create one top level collection to organize the things in the scene
         Group root = new Group();
 
-        // make some shapes and set their properties
         ball = new Ball(width / 2, height - RADIUS - (int)PADDLEHEIGHT - 1, RADIUS, Color.ORANGE);
         root.getChildren().add(ball);
 
@@ -67,32 +65,28 @@ public class Game extends Application {
         BlockConfigurationReader reader = new BlockConfigurationReader();
         gridOfBlocks = reader.loadLevel(root, 1);
 
-        // create a place to see the shapes
         Scene scene = new Scene(root, width, height, background);
-        // respond to input
+
         scene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
         scene.setOnMouseClicked(e -> handleMouseInput(e.getX(), e.getY()));
         return scene;
     }
 
     void step (double elapsedTime) {
-        // update "actors" attributes
         if (!pause) {
             updateShapes(elapsedTime);
         }
-        // check for collisions (order may matter! and should be its own method if lots of kinds of collisions)
     }
 
-    // Change properties of shapes in small ways to animate them over time
     private void updateShapes (double elapsedTime) {
-        // there are more sophisticated ways to animate shapes, but these simple ways work fine to start
-        checkBlockCollision();
+        checkPaddleCollision();
         checkBorderCollision();
+        checkBlockCollision();
         ball.setCenterX(ball.getCenterX() + ball.getXVel() * elapsedTime);
         ball.setCenterY(ball.getCenterY() + ball.getYVel() * elapsedTime);
     }
 
-    private void checkBlockCollision() {
+    private void checkPaddleCollision() {
         if (paddle.getBoundsInParent().intersects(ball.getBoundsInParent())) {
             ball.setYVel(-1 * ball.getYVel());
         }
@@ -105,6 +99,21 @@ public class Game extends Application {
             ball.setYVel(-1 * ball.getYVel());
         } else if (ball.getCenterY() > WINDOWHEIGHT + RADIUS) { // goes below the screen
             reset();
+        }
+    }
+
+    private void checkBlockCollision(){
+        for (Block[] row : gridOfBlocks){
+            for (Block b : row){
+                if (b != null && b.getBoundsInParent().intersects(ball.getBoundsInParent())) {
+                    if (intersectBottom(b) || intersectTop(b)){
+                        ball.setYVel(-1 * ball.getYVel());
+                    }
+                    else if (intersectLeft(b) || intersectRight(b)){
+                        ball.setXVel(-1 * ball.getXVel());
+                    }
+                }
+            }
         }
     }
 
@@ -152,6 +161,23 @@ public class Game extends Application {
             ball.setYVel(-250);
         }
     }
+
+    private boolean intersectBottom(Block b){
+        return ball.getCenterY() + RADIUS >= b.getY() - b.getArcHeight();
+    }
+
+    private boolean intersectTop (Block b){
+        return ball.getCenterY() - RADIUS <= b.getY();
+    }
+
+    private boolean intersectLeft(Block b){
+        return ball.getCenterX() + RADIUS >= b.getX();
+    }
+
+    private boolean intersectRight(Block b){
+        return ball.getCenterX() - RADIUS <= b.getY() + b.getArcWidth();
+    }
+
 
     public static void main (String[] args) {
         launch(args);
