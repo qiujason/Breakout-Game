@@ -1,8 +1,10 @@
 package breakout;
 
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import util.DukeApplicationTest;
@@ -121,6 +123,7 @@ class GameTest extends DukeApplicationTest {
     }
 
     @Test
+
     public void testBallHitBounces() {
         myBall.setCenterX(50);
         myBall.setCenterY(300);
@@ -129,6 +132,22 @@ class GameTest extends DukeApplicationTest {
         for (int i = 0; i < 100000; i++) {
 
         }
+    }
+
+
+    @Test
+    public void testLevelClear(){
+        click(myScene, 200, 500);
+
+        javafxRun(() -> myGame.step(Game.SECOND_DELAY));
+
+        press(myScene, KeyCode.C);
+        javafxRun(() -> myGame.step(Game.SECOND_DELAY));
+
+
+        assertEquals(myBall.getOrigX(), myBall.getCenterX());
+        assertEquals(myBall.getOrigY(), myBall.getCenterY());
+
     }
 
 
