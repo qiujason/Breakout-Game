@@ -100,6 +100,9 @@ public class Game extends Application {
         if (!pause) {
             updateShapes(elapsedTime);
         }
+        if (checkWin()){
+            pause = true;
+        }
     }
 
     private void updateShapes (double elapsedTime) {
@@ -216,6 +219,18 @@ public class Game extends Application {
        b.setLives(b.getLives() - 1);
        b.setFill(b.determineColor());
     }
+
+    private boolean checkWin(){
+        for(Block[] row : gridOfBlocks){
+            for (Block b : row){
+                if (b.getLives() != 0){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 
     public static void main (String[] args) {
         launch(args);
