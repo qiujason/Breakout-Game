@@ -144,7 +144,7 @@ public class Game extends Application {
                     if (gridOfBlocks[i][j].getLives() == 0){
                         root.getChildren().remove(gridOfBlocks[i][j]);
                     }
-                    scoreDisplay.setScore(scoreDisplay.getScore() + 100);
+                    scoreDisplay.addScore();
                 }
 
             }
