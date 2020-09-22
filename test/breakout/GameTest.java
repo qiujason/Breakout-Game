@@ -3,6 +3,7 @@ package breakout;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import util.DukeApplicationTest;
@@ -69,10 +70,10 @@ class GameTest extends DukeApplicationTest {
     public void testKeyBlocks() throws FileNotFoundException {
         Group root = new Group();
         Block[][] gridOfBlocks = reader.loadLevel(root, 1);
-        assertEquals(20, gridOfBlocks[0][0].getX());
-        assertEquals(20, gridOfBlocks[0][0].getY());
-        assertEquals(20, gridOfBlocks[1][0].getX());
-        assertEquals(64, gridOfBlocks[1][0].getY());
+        assertEquals(10, gridOfBlocks[0][0].getX());
+        assertEquals(28, gridOfBlocks[0][0].getY());
+        assertEquals(10, gridOfBlocks[1][0].getX());
+        assertEquals(74, gridOfBlocks[1][0].getY());
     }
 
     @Test
@@ -82,12 +83,21 @@ class GameTest extends DukeApplicationTest {
         myBall.setXVel(-25);
         myBall.setYVel(-30);
 
-        for(int i=0; i < 4; i++){
-            myGame.step(1);
+        for(int i=0; i < 2; i++){
+            javafxRun(() -> myGame.step(1));
         }
 
-        assertEquals(myBall.getXVel(), 25);
-        assertEquals(myBall.getYVel(), 30);
+        myBall.setCenterX(50);
+        myBall.setCenterY(60);
+        myBall.setXVel(-25);
+        myBall.setYVel(-30);
+
+        for(int i=0; i < 4; i++){
+            javafxRun(() -> myGame.step(1));
+        }
+
+        assertEquals(25, myBall.getXVel());
+        assertEquals(30, myBall.getYVel());
     }
 
     @Test
@@ -98,11 +108,11 @@ class GameTest extends DukeApplicationTest {
         myBall.setYVel(-100);
 
         for(int i=0; i < 4; i++){
-            myGame.step(1);
+            javafxRun(() -> myGame.step(1));
         }
 
-        assertEquals(myBall.getXVel(), 0);
-        assertEquals(myBall.getYVel(), 100);
+        assertEquals(0, myBall.getXVel());
+        assertEquals(100, myBall.getYVel());
     }
 
     @Test
@@ -113,14 +123,15 @@ class GameTest extends DukeApplicationTest {
         myBall.setYVel(30);
 
         for(int i=0; i < 12; i++){
-            myGame.step(1);
+            javafxRun(() -> myGame.step(1));
         }
 
-        assertEquals(myBall.getOrigX(), myBall.getCenterX());
-        assertEquals(myBall.getOrigY(), myBall.getCenterY());
+        assertEquals(myBall.getCenterX(), myBall.getOrigX());
+        assertEquals(myBall.getCenterY(), myBall.getOrigY());
     }
 
     @Test
+
     public void testBallHitBounces() {
         myBall.setCenterX(50);
         myBall.setCenterY(300);
@@ -131,8 +142,8 @@ class GameTest extends DukeApplicationTest {
             javafxRun(() -> myGame.step(Game.SECOND_DELAY));
         }
 
-        assertEquals(myBall.getXVel(), 0);
-        assertEquals(myBall.getYVel(), 250);
+        assertEquals(0, myBall.getXVel());
+        assertEquals(250, myBall.getYVel());
     }
 
     @Test
@@ -146,7 +157,7 @@ class GameTest extends DukeApplicationTest {
             javafxRun(() -> myGame.step(Game.SECOND_DELAY));
         }
 
-        assertEquals(myGame.scoreDisplay.getScore(), 110);
+        assertEquals(110, myGame.scoreDisplay.getScore());
     }
 
     @Test
@@ -161,8 +172,25 @@ class GameTest extends DukeApplicationTest {
         }
 
         Exception e = assertThrows(Exception.class, () -> lookup("#block40").query());
-        assertEquals("there is no node in the scene-graph matching the query: NodeQuery: from nodes: [Group@5eea8007[styleClass=root]],\n" +
-                "lookup by function: \"org.testfx.util.NodeQueryUtils$$Lambda$416/0x0000000800d09c40@8e0379d\",\n" +
-                "lookup by selector: \"#block40\"", e.getMessage());
+        assertEquals("there is no node in the scene-graph matching the query: NodeQuery: from nodes:", e.getMessage().substring(0, 78));
+    }
+
+    @Test
+    public void testLevelClear(){
+        press(myScene, KeyCode.C);
+        javafxRun(() -> myGame.step(Game.SECOND_DELAY));
+        Text winMessage = lookup("#winMessage").query();
+        assertTrue(myScene.getRoot().getChildrenUnmodifiable().contains(winMessage));
+    }
+
+    @Test
+    public void testLevelLost(){
+        for(int i=0; i < 30; i++){
+            click(myScene, 200, 500);
+            press(myScene, KeyCode.RIGHT);
+            javafxRun(() -> myGame.step(1));
+        }
+        Text lossMessage = lookup("#lossMessage").query();
+        assertTrue(myScene.getRoot().getChildrenUnmodifiable().contains(lossMessage));
     }
 }
