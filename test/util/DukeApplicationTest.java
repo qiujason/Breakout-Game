@@ -22,8 +22,6 @@ import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
-//testing
-
 /**
  * This class acts as an intermediary between an OpenJFX application and TestFX.
  *
