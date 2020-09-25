@@ -7,8 +7,6 @@ public class Ball extends Circle {
 
     private final int originalX;
     private final int originalY;
-    private double xPosition;
-    private double yPosition;
     private Paint color;
     private int radius;
     private double xVelocity;
@@ -32,20 +30,20 @@ public class Ball extends Circle {
         yVelocity = 0;
     }
 
-    public void setXVel(double value) {
+    public void setXVelocity(double value) {
         xVelocity = value;
     }
 
-    public void setYVel(double value) {
+    public void setYVelocity(double value) {
         yVelocity = value;
     }
 
     public void reverseXVel() {
-        setXVel(-1 * xVelocity);
+        setXVelocity(-1 * xVelocity);
     }
 
     public void reverseYVel() {
-        setYVel(-1 * yVelocity);
+        setYVelocity(-1 * yVelocity);
     }
 
     public void updatePosition(double elapsedTime) {
@@ -53,11 +51,11 @@ public class Ball extends Circle {
         setCenterY(getCenterY() + yVelocity * elapsedTime);
     }
 
-    public double getXVel() {
+    public double getXVelocity() {
         return xVelocity;
     }
 
-    public double getYVel() {
+    public double getYVelocity() {
         return yVelocity;
     }
 
@@ -84,9 +82,4 @@ public class Ball extends Circle {
     public double getTop() {
         return getCenterY() - radius;
     }
-
-    public double getBottom() {
-        return yPosition + radius;
-    }
-
 }
