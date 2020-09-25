@@ -37,6 +37,7 @@ public class Game extends Application {
 
     private Scene myScene;
     private Group root;
+    private BlockConfigurationReader levelReader;
     private Paddle paddle;
     private Ball ball;
     private Block[][] gridOfBlocks;
@@ -71,8 +72,8 @@ public class Game extends Application {
         paddle = new Paddle(width/2 - PADDLEWIDTH/2, height - PADDLEHEIGHT, PADDLEWIDTH, PADDLEHEIGHT, PADDLEDELTA, Color.RED); //TODO: Clean this
         root.getChildren().add(paddle);
 
-        BlockConfigurationReader reader = new BlockConfigurationReader();
-        gridOfBlocks = reader.loadLevel(root, 1);
+        levelReader = new BlockConfigurationReader();
+        gridOfBlocks = levelReader.loadLevel(root, 1);
 
         setUpDisplay(root);
 
@@ -161,6 +162,7 @@ public class Game extends Application {
     private void reset() {
         ball.reset();
         paddle.reset();
+        levelReader.loadLevel(root, 1);
     }
 
     private void handleKeyInput(KeyCode code) {
@@ -191,10 +193,7 @@ public class Game extends Application {
 
     private void cheatKeys(KeyCode code) {
         switch (code) {
-            case R -> {
-                paddle.reset();
-                ball.reset();
-            }
+            case R -> reset();
             case SPACE -> pause = !pause;
             case L -> livesDisplay.addLife();
 //            case P -> ;
@@ -233,21 +232,6 @@ public class Game extends Application {
         return ball.getCenterX() - RADIUS <= b.getY() + b.getArcWidth();
     }
 
-    private boolean hasWon(){
-        for (Block[] row : gridOfBlocks){
-            for (Block b : row){
-                if (b.getLives() != 0){
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private boolean hasLost(){
-        return livesDisplay.getLives() == 0;
-    }
-
     private void checkGameStatus() {
         Text gameMessage = new Text(200, 300, "");
         if (hasWon()) {
@@ -263,6 +247,22 @@ public class Game extends Application {
         reset();
         root.getChildren().add(gameMessage);
     }
+
+    private boolean hasWon(){
+        for (Block[] row : gridOfBlocks){
+            for (Block b : row){
+                if (b.getLives() != 0){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean hasLost(){
+        return livesDisplay.getLives() == 0;
+    }
+
 
     public static void main (String[] args) {
         launch(args);
