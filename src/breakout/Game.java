@@ -10,7 +10,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Duration;=
+import javafx.util.Duration;
 
 public class Game extends Application {
     public static final int WINDOWHEIGHT = 600;

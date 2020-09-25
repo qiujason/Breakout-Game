@@ -10,40 +10,42 @@ import static breakout.Game.*;
 
 public class BlockConfigurationReader {
 
-    String directory = "blockfiles/";
+    String directory = "blockfile/";
 
-    public void readInBlocks(int level, Block[][] gridOfBlocks) {
+    public void readInBlocks(int level, Block[][] gridOfBlocks) throws FileNotFoundException {
         String filePath = directory + "level" + level + ".txt";
-        try {
-            Scanner scanner = new Scanner(new File(filePath));
-            int row = 0;
-            while (scanner.hasNextLine()) {
-                String[] blockLives = scanner.nextLine().split(" ");
-                for(int i = 0; i < gridOfBlocks[row].length; i++){
-                    double xPos = i * (BLOCKWIDTH + GAP) + GAP;
-                    double yPos = row * (BLOCKHEIGHT + GAP) + GAP + DISPLAYHEIGHT;
-                    gridOfBlocks[row][i] = new Block(xPos, yPos, BLOCKWIDTH, BLOCKHEIGHT, Integer.parseInt(blockLives[i]));
-                }
-                row++;
+        Scanner scanner = new Scanner(new File(filePath));
+        int row = 0;
+        while (scanner.hasNextLine()) {
+            String[] blockLives = scanner.nextLine().split(" ");
+            for (int i = 0; i < gridOfBlocks[row].length; i++) {
+                double xPos = i * (BLOCKWIDTH + GAP) + GAP;
+                double yPos = row * (BLOCKHEIGHT + GAP) + GAP + DISPLAYHEIGHT;
+                gridOfBlocks[row][i] = new Block(xPos, yPos, BLOCKWIDTH, BLOCKHEIGHT, Integer.parseInt(blockLives[i]));
             }
-        } catch (FileNotFoundException e) {
-            System.out.println("Invalid file");
+            row++;
         }
     }
 
-    public Block[][] loadLevel(Group root, int level) throws FileNotFoundException {
-        Block[][] gridOfBlocks = new Block[getRowNum(level)][getColNum(level)];
-        readInBlocks(level, gridOfBlocks);
-        for (int i = 0; i < gridOfBlocks.length; i++) {
-            for (int j = 0; j < gridOfBlocks[i].length; j++){
-                Block block = gridOfBlocks[i][j];
-                if (block.getLives() > 0){
-                    block.setId("block" + i + j);
-                    root.getChildren().add(block);
+    public Block[][] loadLevel(Group root, int level) {
+        try {
+            Block[][] gridOfBlocks = new Block[getRowNum(level)][getColNum(level)];
+            readInBlocks(level, gridOfBlocks);
+            for (int i = 0; i < gridOfBlocks.length; i++) {
+                for (int j = 0; j < gridOfBlocks[i].length; j++) {
+                    Block block = gridOfBlocks[i][j];
+                    if (block.getLives() > 0) {
+                        block.setId("block" + i + j);
+                        root.getChildren().add(block);
+                    }
                 }
             }
+            return gridOfBlocks;
+        } catch (FileNotFoundException e) {
+            System.out.println("Invalid file");
+            System.exit(1);
         }
-        return gridOfBlocks;
+        return null;
     }
 
     public Block[][] loadLevelFromExisting(Group root, Block[][] gridOfBlocks){
