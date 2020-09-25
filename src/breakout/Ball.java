@@ -5,8 +5,8 @@ import javafx.scene.shape.Circle;
 
 public class Ball extends Circle {
 
-    private final int originalX;
-    private final int originalY;
+    private final int startX;
+    private final int startY;
     private Paint color;
     private int radius;
     private double xVelocity;
@@ -14,8 +14,8 @@ public class Ball extends Circle {
 
     public Ball(int xPosition, int yPosition, int radius, Paint color){
         super(xPosition, yPosition, radius, color);
-        this.originalX = xPosition;
-        this.originalY = yPosition;
+        this.startX = xPosition;
+        this.startY = yPosition;
         this.radius = radius;
         this.color = color;
         this.xVelocity = 0;
@@ -24,8 +24,8 @@ public class Ball extends Circle {
     }
 
     public void reset() {
-        setCenterX(originalX);
-        setCenterY(originalY);
+        setCenterX(startX);
+        setCenterY(startY);
         xVelocity = 0;
         yVelocity = 0;
     }
@@ -38,11 +38,11 @@ public class Ball extends Circle {
         yVelocity = value;
     }
 
-    public void reverseXVel() {
+    public void reverseXVelocity() {
         setXVelocity(-1 * xVelocity);
     }
 
-    public void reverseYVel() {
+    public void reverseYVelocity() {
         setYVelocity(-1 * yVelocity);
     }
 
@@ -63,12 +63,12 @@ public class Ball extends Circle {
         return xVelocity != 0 && yVelocity != 0;
     }
 
-    public double getOriginalX() {
-        return originalX;
+    public double getStartX() {
+        return startX;
     }
 
-    public double getOriginalY() {
-        return originalY;
+    public double getStartY() {
+        return startY;
     }
 
     public double getLeft() {
