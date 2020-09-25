@@ -10,9 +10,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-
-import java.io.FileNotFoundException;
+import javafx.util.Duration;=
 
 public class Game extends Application {
     public static final int WINDOWHEIGHT = 600;
@@ -48,7 +46,7 @@ public class Game extends Application {
     public boolean pause = false;
 
     @Override
-    public void start(Stage primaryStage) throws FileNotFoundException {
+    public void start(Stage primaryStage) {
         // attach scene to the stage and display it
 
         myScene = setupScene(WINDOWWIDTH, WINDOWHEIGHT, BACKGROUND);
@@ -64,7 +62,7 @@ public class Game extends Application {
         animation.play();
     }
 
-    public Scene setupScene(int width, int height, Paint background) throws FileNotFoundException {
+    public Scene setupScene(int width, int height, Paint background) {
         root = new Group();
 
         ball = new Ball(width / 2, height - RADIUS - (int)PADDLEHEIGHT - 1, RADIUS, Color.ORANGE);

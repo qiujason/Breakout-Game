@@ -32,6 +32,5 @@ public class Paddle extends Rectangle {
 
     public double getOrigY(){
         return this.origY;
-
     }
 }

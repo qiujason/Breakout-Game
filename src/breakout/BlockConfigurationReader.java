@@ -12,19 +12,22 @@ public class BlockConfigurationReader {
 
     String directory = "blockfiles/";
 
-
-    public void readInBlocks(int level, Block[][] gridOfBlocks) throws FileNotFoundException {
+    public void readInBlocks(int level, Block[][] gridOfBlocks) {
         String filePath = directory + "level" + level + ".txt";
-        Scanner scanner = new Scanner(new File(filePath));
-        int row = 0;
-        while (scanner.hasNextLine()) {
-            String[] blockLives = scanner.nextLine().split(" ");
-            for(int i = 0; i < gridOfBlocks[row].length; i++){
-                double xPos = i * (BLOCKWIDTH + GAP) + GAP;
-                double yPos = row * (BLOCKHEIGHT + GAP) + GAP + DISPLAYHEIGHT;
-                gridOfBlocks[row][i] = new Block(xPos, yPos, BLOCKWIDTH, BLOCKHEIGHT, Integer.parseInt(blockLives[i]));
+        try {
+            Scanner scanner = new Scanner(new File(filePath));
+            int row = 0;
+            while (scanner.hasNextLine()) {
+                String[] blockLives = scanner.nextLine().split(" ");
+                for(int i = 0; i < gridOfBlocks[row].length; i++){
+                    double xPos = i * (BLOCKWIDTH + GAP) + GAP;
+                    double yPos = row * (BLOCKHEIGHT + GAP) + GAP + DISPLAYHEIGHT;
+                    gridOfBlocks[row][i] = new Block(xPos, yPos, BLOCKWIDTH, BLOCKHEIGHT, Integer.parseInt(blockLives[i]));
+                }
+                row++;
             }
-            row++;
+        } catch (FileNotFoundException e) {
+            System.out.println("Invalid file");
         }
     }
 
