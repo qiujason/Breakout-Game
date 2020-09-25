@@ -61,7 +61,7 @@ class GameTest extends DukeApplicationTest {
 
     @Test
     public void testPaddleMove(){
-        double originalPosition = myPaddle.getOrigX();
+        double originalPosition = myPaddle.getStartX();
         press(myScene, KeyCode.RIGHT);
         assertTrue(myPaddle.getX() > originalPosition);
     }
