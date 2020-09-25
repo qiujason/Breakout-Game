@@ -43,8 +43,8 @@ class GameTest extends DukeApplicationTest {
 
     @Test
     public void testInitialBallVelocity(){
-        assertEquals(0, myBall.getXVel());
-        assertEquals(0, myBall.getYVel());
+        assertEquals(0, myBall.getXVelocity());
+        assertEquals(0, myBall.getYVelocity());
     }
 
     @Test
@@ -80,8 +80,8 @@ class GameTest extends DukeApplicationTest {
     public void testCornerHit(){
         myBall.setCenterX(50);
         myBall.setCenterY(60);
-        myBall.setXVel(-25);
-        myBall.setYVel(-30);
+        myBall.setXVelocity(-25);
+        myBall.setYVelocity(-30);
 
         for(int i=0; i < 2; i++){
             javafxRun(() -> myGame.step(1));
@@ -89,45 +89,45 @@ class GameTest extends DukeApplicationTest {
 
         myBall.setCenterX(50);
         myBall.setCenterY(60);
-        myBall.setXVel(-25);
-        myBall.setYVel(-30);
+        myBall.setXVelocity(-25);
+        myBall.setYVelocity(-30);
 
         for(int i=0; i < 4; i++){
             javafxRun(() -> myGame.step(1));
         }
 
-        assertEquals(25, myBall.getXVel());
-        assertEquals(30, myBall.getYVel());
+        assertEquals(25, myBall.getXVelocity());
+        assertEquals(30, myBall.getYVelocity());
     }
 
     @Test
     public void testPaddleHit(){
         myBall.setCenterX(250);
         myBall.setCenterY(300);
-        myBall.setXVel(0);
-        myBall.setYVel(-100);
+        myBall.setXVelocity(0);
+        myBall.setYVelocity(-100);
 
         for(int i=0; i < 4; i++){
             javafxRun(() -> myGame.step(1));
         }
 
-        assertEquals(0, myBall.getXVel());
-        assertEquals(100, myBall.getYVel());
+        assertEquals(0, myBall.getXVelocity());
+        assertEquals(100, myBall.getYVelocity());
     }
 
     @Test
     public void testBottomHit(){
         myBall.setCenterX(100);
         myBall.setCenterY(300);
-        myBall.setXVel(0);
-        myBall.setYVel(30);
+        myBall.setXVelocity(0);
+        myBall.setYVelocity(30);
 
         for(int i=0; i < 12; i++){
             javafxRun(() -> myGame.step(1));
         }
 
-        assertEquals(myBall.getCenterX(), myBall.getOriginalX());
-        assertEquals(myBall.getCenterY(), myBall.getOriginalY());
+        assertEquals(myBall.getCenterX(), myBall.getStartX());
+        assertEquals(myBall.getCenterY(), myBall.getStartY());
     }
 
     @Test
@@ -135,23 +135,23 @@ class GameTest extends DukeApplicationTest {
     public void testBallHitBounces() {
         myBall.setCenterX(50);
         myBall.setCenterY(300);
-        myBall.setXVel(0);
-        myBall.setYVel(-250);
+        myBall.setXVelocity(0);
+        myBall.setYVelocity(-250);
 
         for (int i = 0; i < 12; i++) {
             javafxRun(() -> myGame.step(Game.SECOND_DELAY));
         }
 
-        assertEquals(0, myBall.getXVel());
-        assertEquals(250, myBall.getYVel());
+        assertEquals(0, myBall.getXVelocity());
+        assertEquals(250, myBall.getYVelocity());
     }
 
     @Test
     public void testBallHitUpdateScore() {
         myBall.setCenterX(50);
         myBall.setCenterY(300);
-        myBall.setXVel(0);
-        myBall.setYVel(-250);
+        myBall.setXVelocity(0);
+        myBall.setYVelocity(-250);
 
         for (int i = 0; i < 12; i++) {
             javafxRun(() -> myGame.step(Game.SECOND_DELAY));
@@ -164,8 +164,8 @@ class GameTest extends DukeApplicationTest {
     public void testBallHitDeleteBlock() {
         myBall.setCenterX(50);
         myBall.setCenterY(300);
-        myBall.setXVel(0);
-        myBall.setYVel(-250);
+        myBall.setXVelocity(0);
+        myBall.setYVelocity(-250);
 
         for (int i = 0; i < 12; i++) {
             javafxRun(() -> myGame.step(Game.SECOND_DELAY));
