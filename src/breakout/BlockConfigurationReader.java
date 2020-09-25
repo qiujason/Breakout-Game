@@ -10,7 +10,7 @@ import static breakout.Game.*;
 
 public class BlockConfigurationReader {
 
-    String directory = "blockfile/";
+    String directory = "blockfiles/";
 
     public void readInBlocks(int level, Block[][] gridOfBlocks) throws FileNotFoundException {
         String filePath = directory + "level" + level + ".txt";
