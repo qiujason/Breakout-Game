@@ -126,8 +126,8 @@ class GameTest extends DukeApplicationTest {
             javafxRun(() -> myGame.step(1));
         }
 
-        assertEquals(myBall.getCenterX(), myBall.getOrigX());
-        assertEquals(myBall.getCenterY(), myBall.getOrigY());
+        assertEquals(myBall.getCenterX(), myBall.getOriginalX());
+        assertEquals(myBall.getCenterY(), myBall.getOriginalY());
     }
 
     @Test

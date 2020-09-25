@@ -5,61 +5,88 @@ import javafx.scene.shape.Circle;
 
 public class Ball extends Circle {
 
-    private final int origX;
-    private final int origY;
-    private int xPos;
-    private int yPos;
+    private final int originalX;
+    private final int originalY;
+    private double xPosition;
+    private double yPosition;
     private Paint color;
     private int radius;
-    private double xVel = 0;
-    private double yVel = 0;
+    private double xVelocity;
+    private double yVelocity;
 
-    public Ball(int xPos, int yPos, int radius, Paint color){
-        super(xPos, yPos, radius, color);
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.origX = xPos;
-        this.origY = yPos;
+    public Ball(int xPosition, int yPosition, int radius, Paint color){
+        super(xPosition, yPosition, radius, color);
+        this.originalX = xPosition;
+        this.originalY = yPosition;
         this.radius = radius;
         this.color = color;
+        this.xVelocity = 0;
+        this.yVelocity = 0;
         setId("ball");
     }
 
     public void reset() {
-        xPos = origX;
-        yPos = origY;
-        setCenterX(xPos);
-        setCenterY(yPos);
-        xVel = 0;
-        yVel = 0;
+        setCenterX(originalX);
+        setCenterY(originalY);
+        xVelocity = 0;
+        yVelocity = 0;
     }
 
     public void setXVel(double value) {
-        xVel = value;
+        xVelocity = value;
     }
 
     public void setYVel(double value) {
-        yVel = value;
+        yVelocity = value;
+    }
+
+    public void reverseXVel() {
+        setXVel(-1 * xVelocity);
+    }
+
+    public void reverseYVel() {
+        setYVel(-1 * yVelocity);
+    }
+
+    public void updatePosition(double elapsedTime) {
+        setCenterX(getCenterX() + xVelocity * elapsedTime);
+        setCenterY(getCenterY() + yVelocity * elapsedTime);
     }
 
     public double getXVel() {
-        return xVel;
+        return xVelocity;
     }
 
     public double getYVel() {
-        return yVel;
+        return yVelocity;
     }
 
     public boolean getInMotion() {
-        return xVel != 0 && yVel != 0;
+        return xVelocity != 0 && yVelocity != 0;
     }
 
-    public double getOrigX() {
-        return origX;
+    public double getOriginalX() {
+        return originalX;
     }
 
-    public double getOrigY() {
-        return origY;
+    public double getOriginalY() {
+        return originalY;
+    }
+
+    public double getLeft() {
+        return getCenterX() - radius;
+    }
+
+    public double getRight() {
+        return getCenterX() + radius;
+    }
+
+    public double getTop() {
+        return getCenterY() - radius;
+    }
+
+    public double getBottom() {
+        return yPosition + radius;
     }
 
 }

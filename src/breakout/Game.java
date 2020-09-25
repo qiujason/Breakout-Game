@@ -109,48 +109,55 @@ public class Game extends Application {
         checkPaddleCollision();
         checkBorderCollision();
         checkBlockCollision();
-        ball.setCenterX(ball.getCenterX() + ball.getXVel() * elapsedTime);
-        ball.setCenterY(ball.getCenterY() + ball.getYVel() * elapsedTime);
+        ball.updatePosition(elapsedTime);
     }
 
     private void checkPaddleCollision() {
-        if (paddle.getBoundsInParent().intersects(ball.getBoundsInParent())) {
-            if (intersectBottom(paddle) || intersectTop(paddle)) {
-                ball.setYVel(-1 * ball.getYVel());
-            } else if (intersectLeft(paddle) || intersectRight(paddle)) {
-                ball.setXVel(-1 * ball.getXVel());
-            }
-        }
-    }
-
-    private void checkBorderCollision() {
-        if (ball.getCenterX() - RADIUS <= 0 || ball.getCenterX() + RADIUS >= WINDOWWIDTH) {
-            ball.setXVel(-1 * ball.getXVel());
-        } else if (ball.getCenterY() - RADIUS <= DISPLAYHEIGHT) {
-            ball.setYVel(-1 * ball.getYVel());
-        } else if (ball.getCenterY() > WINDOWHEIGHT + RADIUS) { // goes below the screen
-            reset();
-            livesDisplay.subtractLife();
+        if (isIntersectingWithBall(paddle)) {
+            updateVelocityUponCollision(paddle);
         }
     }
 
     private void checkBlockCollision(){
         for (int i = 0; i < gridOfBlocks.length; i++){
             for (int j = 0; j < gridOfBlocks[0].length; j++){
-                Block b = gridOfBlocks[i][j];
-                if (b.getLives() > 0 && b.getBoundsInParent().intersects(ball.getBoundsInParent())) {
-                    if (intersectBottom(b) || intersectTop(b)) {
-                        ball.setYVel(-1 * ball.getYVel());
-                    } else if (intersectLeft(b) || intersectRight(b)) {
-                        ball.setXVel(-1 * ball.getXVel());
-                    }
-                    gridOfBlocks[i][j].subtractLife();
-                    if (gridOfBlocks[i][j].getLives() == 0){
-                        root.getChildren().remove(gridOfBlocks[i][j]);
-                    }
+                Block currentBlock = gridOfBlocks[i][j];
+                if (currentBlock.getLives() > 0 && isIntersectingWithBall(currentBlock)) {
+                    updateVelocityUponCollision(currentBlock);
+                    updateBlockStatus(currentBlock);
                     scoreDisplay.addScore();
                 }
             }
+        }
+    }
+
+    private boolean isIntersectingWithBall(Rectangle gamePiece) {
+        return gamePiece.getBoundsInParent().intersects(ball.getBoundsInParent());
+    }
+
+    private void updateBlockStatus(Block block) {
+        block.subtractLife();
+        if (block.getLives() == 0){
+            root.getChildren().remove(block);
+        }
+    }
+
+    private void updateVelocityUponCollision(Rectangle gamePiece) {
+        if (intersectBottom(gamePiece) || intersectTop(gamePiece)) {
+            ball.reverseYVel();
+        } else if (intersectLeft(gamePiece) || intersectRight(gamePiece)) {
+            ball.reverseXVel();
+        }
+    }
+
+    private void checkBorderCollision() {
+        if (ball.getLeft() <= 0 || ball.getRight() >= WINDOWWIDTH) {
+            ball.reverseXVel();
+        } else if (ball.getTop() <= DISPLAYHEIGHT) {
+            ball.reverseYVel();
+        } else if (ball.getTop() > WINDOWHEIGHT) { // goes below the screen
+            reset();
+            livesDisplay.subtractLife();
         }
     }
 
@@ -159,26 +166,28 @@ public class Game extends Application {
         paddle.reset();
     }
 
-    // What to do each time a key is pressed
-
     private void handleKeyInput (KeyCode code) {
         cheatKeys(code);
-        if (!pause) {
-            if (code == KeyCode.LEFT) {
+        if (pause) {
+            return;
+        }
+        switch(code) {
+            case LEFT:
                 if (paddle.getX() >= PADDLEDELTA) {
                     paddle.setX(paddle.getX() - PADDLEDELTA);
                     if (!ball.getInMotion()) {
                         ball.setCenterX(ball.getCenterX() - PADDLEDELTA);
                     }
                 }
-            } else if (code == KeyCode.RIGHT) {
+                break;
+            case RIGHT:
                 if (paddle.getX() + PADDLEWIDTH <= WINDOWWIDTH - PADDLEDELTA) {
                     paddle.setX(paddle.getX() + PADDLEDELTA);
                     if (!ball.getInMotion()) {
                         ball.setCenterX(ball.getCenterX() + PADDLEDELTA);
                     }
                 }
-            }
+                break;
         }
     }
 
