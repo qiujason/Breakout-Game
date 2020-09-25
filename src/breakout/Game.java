@@ -101,8 +101,7 @@ public class Game extends Application {
         if (!pause) {
             updateShapes(elapsedTime);
         }
-        checkWin();
-        checkLoss();
+        checkGameStatus();
     }
 
     private void updateShapes (double elapsedTime) {
@@ -144,17 +143,17 @@ public class Game extends Application {
 
     private void updateVelocityUponCollision(Rectangle gamePiece) {
         if (intersectBottom(gamePiece) || intersectTop(gamePiece)) {
-            ball.reverseYVel();
+            ball.reverseYVelocity();
         } else if (intersectLeft(gamePiece) || intersectRight(gamePiece)) {
-            ball.reverseXVel();
+            ball.reverseXVelocity();
         }
     }
 
     private void checkBorderCollision() {
         if (ball.getLeft() <= 0 || ball.getRight() >= WINDOWWIDTH) {
-            ball.reverseXVel();
+            ball.reverseXVelocity();
         } else if (ball.getTop() <= DISPLAYHEIGHT) {
-            ball.reverseYVel();
+            ball.reverseYVelocity();
         } else if (ball.getTop() > WINDOWHEIGHT) { // goes below the screen
             reset();
             livesDisplay.subtractLife();
@@ -166,46 +165,47 @@ public class Game extends Application {
         paddle.reset();
     }
 
-    private void handleKeyInput (KeyCode code) {
+    private void handleKeyInput(KeyCode code) {
         cheatKeys(code);
-        if (pause) {
-            return;
+        switch (code) {
+            case LEFT -> handleLeftPress();
+            case RIGHT -> handleRightPress();
         }
-        switch(code) {
-            case LEFT:
-                if (paddle.getX() >= PADDLEDELTA) {
-                    paddle.setX(paddle.getX() - PADDLEDELTA);
-                    if (!ball.getInMotion()) {
-                        ball.setCenterX(ball.getCenterX() - PADDLEDELTA);
-                    }
-                }
-                break;
-            case RIGHT:
-                if (paddle.getX() + PADDLEWIDTH <= WINDOWWIDTH - PADDLEDELTA) {
-                    paddle.setX(paddle.getX() + PADDLEDELTA);
-                    if (!ball.getInMotion()) {
-                        ball.setCenterX(ball.getCenterX() + PADDLEDELTA);
-                    }
-                }
-                break;
+    }
+
+    private void handleLeftPress() {
+        if (!pause && paddle.getX() >= PADDLEDELTA) {
+            paddle.setX(paddle.getX() - PADDLEDELTA);
+            if (!ball.getInMotion()) {
+                ball.setCenterX(ball.getCenterX() - PADDLEDELTA);
+            }
+        }
+    }
+
+    private void handleRightPress() {
+        if (!pause && paddle.getX() + PADDLEWIDTH <= WINDOWWIDTH - PADDLEDELTA) {
+            paddle.setX(paddle.getX() + PADDLEDELTA);
+            if (!ball.getInMotion()) {
+                ball.setCenterX(ball.getCenterX() + PADDLEDELTA);
+            }
         }
     }
 
     private void cheatKeys(KeyCode code) {
-        if (code == KeyCode.R) {
-            paddle.reset();
-            ball.reset();
-        } else if (code == KeyCode.SPACE) {
-            pause = !pause;
-        } else if (code == KeyCode.L) {
-            livesDisplay.addLife();
-        } else if (code == KeyCode.P) {
-
-        } else if (code == KeyCode.C) {
-            for (int i = 0; i < gridOfBlocks.length; i++) {
-                for (int j = 0; j < gridOfBlocks[0].length; j++) {
-                    gridOfBlocks[i][j].setLives(0);
-                    root.getChildren().remove(gridOfBlocks[i][j]);
+        switch (code) {
+            case R -> {
+                paddle.reset();
+                ball.reset();
+            }
+            case SPACE -> pause = !pause;
+            case L -> livesDisplay.addLife();
+//            case P -> ;
+            case C -> {
+                for (int i = 0; i < gridOfBlocks.length; i++) {
+                    for (int j = 0; j < gridOfBlocks[0].length; j++) {
+                        gridOfBlocks[i][j].setLives(0);
+                        root.getChildren().remove(gridOfBlocks[i][j]);
+                    }
                 }
             }
         }
@@ -213,9 +213,9 @@ public class Game extends Application {
 
     // What to do each time a key is pressed
     private void handleMouseInput (double x, double y) {
-        if (ball.getXVel() == 0 && ball.getYVel() == 0) {
-            ball.setXVel(x - WINDOWWIDTH/2);
-            ball.setYVel(-250);
+        if (ball.getXVelocity() == 0 && ball.getYVelocity() == 0) {
+            ball.setXVelocity(x - WINDOWWIDTH/2);
+            ball.setYVelocity(-250);
         }
     }
 
@@ -236,7 +236,7 @@ public class Game extends Application {
     }
 
     private boolean hasWon(){
-        for(Block[] row : gridOfBlocks){
+        for (Block[] row : gridOfBlocks){
             for (Block b : row){
                 if (b.getLives() != 0){
                     return false;
@@ -250,26 +250,21 @@ public class Game extends Application {
         return livesDisplay.getLives() == 0;
     }
 
-    public void checkWin(){
-        if (hasWon()){
-            pause = true;
-            reset();
-            Text winMessage = new Text(200,300, "You Passed This Level!");
-            root.getChildren().add(winMessage);
-            winMessage.setId("winMessage");
+    private void checkGameStatus() {
+        Text gameMessage = new Text(200, 300, "");
+        if (hasWon()) {
+            gameMessage.setText("You Passed This Level!");
+            gameMessage.setId("winMessage");
+        } else if (hasLost()) {
+            gameMessage.setText("You Ran Out Of Lives! You lost!");
+            gameMessage.setId("lossMessage");
+        } else {
+            return;
         }
+        pause = true;
+        reset();
+        root.getChildren().add(gameMessage);
     }
-
-    public void checkLoss(){
-        if (hasLost()){
-            pause = true;
-            reset();
-            Text lossMessage = new Text(200,300, "You Ran Out Of Lives! You lost!");
-            root.getChildren().add(lossMessage);
-            lossMessage.setId("lossMessage");
-        }
-    }
-
 
     public static void main (String[] args) {
         launch(args);
