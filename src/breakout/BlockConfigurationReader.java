@@ -19,9 +19,9 @@ public class BlockConfigurationReader {
         while (scanner.hasNextLine()) {
             String[] blockLives = scanner.nextLine().split(" ");
             for (int i = 0; i < gridOfBlocks[row].length; i++) {
-                double xPos = i * (BLOCKWIDTH + GAP) + GAP;
-                double yPos = row * (BLOCKHEIGHT + GAP) + GAP + DISPLAYHEIGHT;
-                gridOfBlocks[row][i] = new Block(xPos, yPos, BLOCKWIDTH, BLOCKHEIGHT, Integer.parseInt(blockLives[i]));
+                double xPos = i * (GameStatus.BLOCKWIDTH + GameStatus.GAP) + GameStatus.GAP;
+                double yPos = row * (GameStatus.BLOCKHEIGHT + GameStatus.GAP) + GameStatus.GAP + GameStatus.DISPLAYHEIGHT;
+                gridOfBlocks[row][i] = new Block(xPos, yPos, GameStatus.BLOCKWIDTH, GameStatus.BLOCKHEIGHT, Integer.parseInt(blockLives[i]));
             }
             row++;
         }

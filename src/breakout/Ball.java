@@ -2,6 +2,7 @@ package breakout;
 
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 
 public class Ball extends Circle {
 
@@ -49,6 +50,30 @@ public class Ball extends Circle {
     public void updatePosition(double elapsedTime) {
         setCenterX(getCenterX() + xVelocity * elapsedTime);
         setCenterY(getCenterY() + yVelocity * elapsedTime);
+    }
+
+    public void updateVelocityUponCollision(Rectangle gamePiece) {
+        if (intersectBottom(gamePiece) || intersectTop(gamePiece)) {
+            reverseYVelocity();
+        } else if (intersectLeft(gamePiece) || intersectRight(gamePiece)) {
+            reverseXVelocity();
+        }
+    }
+
+    private boolean intersectBottom(Rectangle b){
+        return getCenterY() + radius >= b.getY() - b.getArcHeight();
+    }
+
+    private boolean intersectTop(Rectangle b){
+        return getCenterY() - radius <= b.getY();
+    }
+
+    private boolean intersectLeft(Rectangle b){
+        return getCenterX() + radius >= b.getX();
+    }
+
+    private boolean intersectRight(Rectangle b){
+        return getCenterX() - radius <= b.getY() + b.getArcWidth();
     }
 
     public double getXVelocity() {
