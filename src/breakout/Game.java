@@ -1,4 +1,5 @@
 package breakout;
+import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
@@ -6,28 +7,36 @@ public class Game {
     private final GameLauncher gameLauncher;
     private final Ball ball;
     private final Paddle paddle;
-    private final KeyInput inputReader;
     private final Block[][] startGridOfBlocks;
     private Block[][] gridOfBlocks;
     private ScoreDisplay scoreDisplay;
     private LivesDisplay livesDisplay;
+    private boolean pause = false;
 
-    public boolean pause = false;
-
-    public Game(GameLauncher gameLauncher, Ball ball, Paddle paddle, Block[][] gridOfBlocks) {
+    public Game(GameLauncher gameLauncher, LivesDisplay livesDisplay, ScoreDisplay scoreDisplay,
+                Ball ball, Paddle paddle, Block[][] gridOfBlocks) {
         this.gameLauncher = gameLauncher;
+        this.livesDisplay = livesDisplay;
+        this.scoreDisplay = scoreDisplay;
         this.ball = ball;
         this.paddle = paddle;
-        this.startGridOfBlocks = this.gridOfBlocks = gridOfBlocks;
-        inputReader = new KeyInput(this);
+        this.startGridOfBlocks = gridOfBlocks;
+        this.gridOfBlocks = gridOfBlocks;
     }
 
-    public void addLivesDisplay(LivesDisplay livesDisplay) {
-        this.livesDisplay = livesDisplay;
+    public void handleMouseInput(double x, double y) {
+        if (ball.getXVelocity() == 0 && ball.getYVelocity() == 0) {
+            ball.setXVelocity(x - GameStatus.WINDOWWIDTH/2.0);
+            ball.setYVelocity(-250);
+        }
     }
 
-    public void addScoreDisplay(ScoreDisplay scoreDisplay) {
-        this.scoreDisplay = scoreDisplay;
+    public void handleKeyInput(KeyCode code) {
+        cheatKeys(code);
+        switch (code) {
+            case LEFT -> handleLeftPress();
+            case RIGHT -> handleRightPress();
+        }
     }
 
     public void step(double elapsedTime) {
@@ -35,6 +44,25 @@ public class Game {
             updateShapes(elapsedTime);
         }
         checkGameStatus();
+    }
+
+    public void reset() {
+        ball.reset();
+        paddle.reset();
+        gridOfBlocks = startGridOfBlocks;
+    }
+
+    public void clearLevel() {
+        for (int i = 0; i < gridOfBlocks.length; i++) {
+            for (int j = 0; j < gridOfBlocks[0].length; j++) {
+                gridOfBlocks[i][j].setLives(0);
+                gameLauncher.removeFromRoot(gridOfBlocks[i][j]);
+            }
+        }
+    }
+
+    public void setPause() {
+        pause = !pause;
     }
 
     private void updateShapes(double elapsedTime) {
@@ -70,7 +98,6 @@ public class Game {
         block.subtractLife();
         if (block.getLives() == 0) {
             gameLauncher.removeFromRoot(block);
-//            root.getChildren().remove(block);
         }
     }
 
@@ -83,26 +110,6 @@ public class Game {
             reset();
             livesDisplay.subtractLife();
         }
-    }
-
-    public void reset() {
-        ball.reset();
-        paddle.reset();
-        gridOfBlocks = startGridOfBlocks;
-    }
-
-    public void clearLevel() {
-        for (int i = 0; i < gridOfBlocks.length; i++) {
-            for (int j = 0; j < gridOfBlocks[0].length; j++) {
-                gridOfBlocks[i][j].setLives(0);
-                gameLauncher.removeFromRoot(gridOfBlocks[i][j]);
-//                root.getChildren().remove(gridOfBlocks[i][j]);
-            }
-        }
-    }
-
-    public void setPause() {
-        pause = !pause;
     }
 
     private void checkGameStatus() {
@@ -119,7 +126,6 @@ public class Game {
         pause = true;
         reset();
         gameLauncher.addToRoot(gameMessage);
-//        root.getChildren().add(gameMessage);
     }
 
     private boolean hasWon(){
@@ -137,27 +143,31 @@ public class Game {
         return livesDisplay.getLives() == 0;
     }
 
-    public Ball getBall() {
-        return ball;
+    private void handleLeftPress() {
+        if (!pause && paddle.getX() >= GameStatus.PADDLEDELTA) {
+            paddle.setX(paddle.getX() - GameStatus.PADDLEDELTA);
+            if (!ball.getInMotion()) {
+                ball.setCenterX(ball.getCenterX() - GameStatus.PADDLEDELTA);
+            }
+        }
     }
 
-    public Paddle getPaddle() {
-        return paddle;
+    private void handleRightPress() {
+        if (!pause && paddle.getX() + GameStatus.PADDLEWIDTH <= GameStatus.WINDOWWIDTH - GameStatus.PADDLEDELTA) {
+            paddle.setX(paddle.getX() + GameStatus.PADDLEDELTA);
+            if (!ball.getInMotion()) {
+                ball.setCenterX(ball.getCenterX() + GameStatus.PADDLEDELTA);
+            }
+        }
     }
 
-    public Block[][] getGridOfBlocks() {
-        return gridOfBlocks;
-    }
-
-    public KeyInput getInputReader() {
-        return inputReader;
-    }
-
-    public LivesDisplay getLivesDisplay() {
-        return livesDisplay;
-    }
-
-    public boolean getPause() {
-        return pause;
+    private void cheatKeys(KeyCode code) {
+        switch (code) {
+            case R -> reset();
+            case SPACE -> setPause();
+            case L -> livesDisplay.addLife();
+//            case P -> ;
+            case C -> clearLevel();
+        }
     }
 }

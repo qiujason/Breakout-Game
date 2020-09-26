@@ -8,8 +8,8 @@ public class Ball extends Circle {
 
     private final int startX;
     private final int startY;
+    private final int radius;
     private Paint color;
-    private int radius;
     private double xVelocity;
     private double yVelocity;
 
@@ -60,22 +60,6 @@ public class Ball extends Circle {
         }
     }
 
-    private boolean intersectBottom(Rectangle b){
-        return getCenterY() + radius >= b.getY() - b.getArcHeight();
-    }
-
-    private boolean intersectTop(Rectangle b){
-        return getCenterY() - radius <= b.getY();
-    }
-
-    private boolean intersectLeft(Rectangle b){
-        return getCenterX() + radius >= b.getX();
-    }
-
-    private boolean intersectRight(Rectangle b){
-        return getCenterX() - radius <= b.getY() + b.getArcWidth();
-    }
-
     public double getXVelocity() {
         return xVelocity;
     }
@@ -107,4 +91,21 @@ public class Ball extends Circle {
     public double getTop() {
         return getCenterY() - radius;
     }
+
+    private boolean intersectBottom(Rectangle b){
+        return getCenterY() + radius >= b.getY() - b.getArcHeight();
+    }
+
+    private boolean intersectTop(Rectangle b){
+        return getCenterY() - radius <= b.getY();
+    }
+
+    private boolean intersectLeft(Rectangle b){
+        return getCenterX() + radius >= b.getX();
+    }
+
+    private boolean intersectRight(Rectangle b){
+        return getCenterX() - radius <= b.getY() + b.getArcWidth();
+    }
+
 }

@@ -32,41 +32,43 @@ public class GameLauncher extends Application {
         animation.play();
     }
 
-    public Scene setupScene(int width, int height, Paint background) {
+    private Scene setupScene(int width, int height, Paint background) {
         root = new Group();
-
         Ball ball = new Ball(width / 2,
                 height - GameStatus.RADIUS - (int)GameStatus.PADDLEHEIGHT - 1, GameStatus.RADIUS, Color.ORANGE);
         root.getChildren().add(ball);
-
         Paddle paddle = new Paddle(width/2.0 - GameStatus.PADDLEWIDTH/2, height - GameStatus.PADDLEHEIGHT,
                 GameStatus.PADDLEWIDTH, GameStatus.PADDLEHEIGHT, GameStatus.PADDLEDELTA, Color.RED); //TODO: Clean this
         root.getChildren().add(paddle);
-
         BlockConfigurationReader levelReader = new BlockConfigurationReader();
         Block[][] gridOfBlocks = levelReader.loadLevel(root, 1);
-
-        game = new Game(this, ball, paddle, gridOfBlocks);
-        setUpDisplay();
+        setUpDisplayBar();
+        LivesDisplay livesDisplay = setUpLivesDisplay();
+        ScoreDisplay scoreDisplay = setUpScoreDisplay();
+        game = new Game(this, livesDisplay, scoreDisplay, ball, paddle, gridOfBlocks);
 
         Scene scene = new Scene(root, width, height, background);
-        scene.setOnKeyPressed(e -> game.getInputReader().handleKeyInput(e.getCode()));
-        scene.setOnMouseClicked(e -> game.getInputReader().handleMouseInput(e.getX(), e.getY()));
+        scene.setOnKeyPressed(e -> game.handleKeyInput(e.getCode()));
+        scene.setOnMouseClicked(e -> game.handleMouseInput(e.getX(), e.getY()));
         return scene;
     }
 
-    private void setUpDisplay() {
+    private void setUpDisplayBar() {
         Rectangle display = new Rectangle(GameStatus.WINDOWWIDTH, GameStatus.DISPLAYHEIGHT);
         display.setFill(Color.LIGHTGREY);
         root.getChildren().add(display);
+    }
 
+    private LivesDisplay setUpLivesDisplay() {
         LivesDisplay livesDisplay = new LivesDisplay(GameStatus.LIVES, GameStatus.LIVES_DISPLAY_XPOS, GameStatus.LIVES_DISPLAY_YPOS);
         root.getChildren().add(livesDisplay);
-        game.addLivesDisplay(livesDisplay);
+        return livesDisplay;
+    }
 
+    private ScoreDisplay setUpScoreDisplay() {
         ScoreDisplay scoreDisplay = new ScoreDisplay(GameStatus.SCORE_DISPLAY_XPOS, GameStatus.SCORE_DISPLAY_YPOS);
         root.getChildren().add(scoreDisplay);
-        game.addScoreDisplay(scoreDisplay);
+        return scoreDisplay;
     }
 
     public void addToRoot(Node element) {
