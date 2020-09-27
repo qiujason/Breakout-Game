@@ -27,9 +27,8 @@ public class BlockConfigurationReader {
         }
     }
 
-    public Block[][] loadLevel(Group root, int level) {
-        try {
-            Block[][] gridOfBlocks = new Block[getRowNum(level)][getColNum(level)];
+    public Block[][] loadLevel(Group root, int level) throws FileNotFoundException {
+        Block[][] gridOfBlocks = new Block[getRowNum(level)][getColNum(level)];
             readInBlocks(level, gridOfBlocks);
             for (int i = 0; i < gridOfBlocks.length; i++) {
                 for (int j = 0; j < gridOfBlocks[i].length; j++) {
@@ -41,24 +40,8 @@ public class BlockConfigurationReader {
                 }
             }
             return gridOfBlocks;
-        } catch (FileNotFoundException e) {
-            System.out.println("Invalid file");
-            System.exit(1);
-        }
-        return null;
-    }
 
-    public Block[][] loadLevelFromExisting(Group root, Block[][] gridOfBlocks){
-        for (Block[] row : gridOfBlocks){
-            for (Block block : row){
-                if (block.getLives() > 0){
-                    root.getChildren().add(block);
-                }
-            }
-        }
-        return gridOfBlocks;
     }
-
 
     public int getRowNum(int level) throws FileNotFoundException {
         String filePath = directory + "level" + level + ".txt";

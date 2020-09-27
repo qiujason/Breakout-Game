@@ -55,9 +55,12 @@ public class GameLauncher extends Application {
     }
 
     private Block[][] setUpLevel() {
-        BlockConfigurationReader levelReader = new BlockConfigurationReader();
-        Block[][] gridOfBlocks = levelReader.loadLevel(root, 1);
-        return gridOfBlocks;
+        try{
+            BlockConfigurationReader levelReader = new BlockConfigurationReader();
+            Block[][] gridOfBlocks = levelReader.loadLevel(root, 1);
+            return gridOfBlocks;
+        } catch(Exception e){}
+        return null;
     }
 
     private void setUpDisplayBar() {

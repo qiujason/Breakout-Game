@@ -4,6 +4,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+import java.io.FileNotFoundException;
+
 public class Game {
     private final GameLauncher gameLauncher;
     private final Ball ball;
@@ -51,11 +53,14 @@ public class Game {
         checkGameStatus();
     }
 
-    public void resetLevel() {
+    public void resetLevel()  {
         resetBallPaddle();
         clearLevel();
         BlockConfigurationReader levelReader = new BlockConfigurationReader();
-        gridOfBlocks = levelReader.loadLevel(root, level);
+        try{
+            gridOfBlocks = levelReader.loadLevel(root, level);
+        }
+        catch(Exception e){}
     }
 
     public void resetBallPaddle(){
@@ -128,7 +133,7 @@ public class Game {
         if (hasWon()) {
             gameMessage.setText("You Passed This Level!");
             gameMessage.setId("winMessage");
-            loadNextLevel(this.level);
+            loadNextLevel();
             return;
         } else if (hasLost()) {
             gameMessage.setText("You Ran Out Of Lives! You lost!");
@@ -183,11 +188,19 @@ public class Game {
         }
     }
 
-    private void loadNextLevel(int level){
-        clearLevel();
-        this.level += 1;
-        BlockConfigurationReader levelReader = new BlockConfigurationReader();
-        gridOfBlocks = levelReader.loadLevel(root, this.level);
-        resetBallPaddle();
+    private void loadNextLevel(){
+        try{
+            clearLevel();
+            this.level += 1;
+            BlockConfigurationReader levelReader = new BlockConfigurationReader();
+            gridOfBlocks = levelReader.loadLevel(root, this.level);
+            resetBallPaddle();
+        }
+        catch(Exception e){
+            Text gameMessage = new Text(150, 300, "WOWOWOW!!! YOU BEAT THE WHOLE GAME");
+            gameLauncher.addToRoot(gameMessage);
+            resetBallPaddle();
+        }
+
     }
 }
