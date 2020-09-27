@@ -9,7 +9,6 @@ public class Ball extends Circle {
     private final int startX;
     private final int startY;
     private final int radius;
-    private Paint color;
     private double xVelocity;
     private double yVelocity;
 
@@ -18,7 +17,6 @@ public class Ball extends Circle {
         this.startX = xPosition;
         this.startY = yPosition;
         this.radius = radius;
-        this.color = color;
         this.xVelocity = 0;
         this.yVelocity = 0;
         setId("ball");
@@ -39,14 +37,6 @@ public class Ball extends Circle {
         yVelocity = value;
     }
 
-    public void reverseXVelocity() {
-        setXVelocity(-1 * xVelocity);
-    }
-
-    public void reverseYVelocity() {
-        setYVelocity(-1 * yVelocity);
-    }
-
     public void updatePosition(double elapsedTime) {
         setCenterX(getCenterX() + xVelocity * elapsedTime);
         setCenterY(getCenterY() + yVelocity * elapsedTime);
@@ -58,6 +48,14 @@ public class Ball extends Circle {
         } else if (intersectLeft(gamePiece) || intersectRight(gamePiece)) {
             reverseXVelocity();
         }
+    }
+
+    public void updateXVelocityUponBorderCollision() {
+        reverseXVelocity();
+    }
+
+    public void updateYVelocityUponBorderCollision() {
+        reverseYVelocity();
     }
 
     public double getXVelocity() {
@@ -72,14 +70,6 @@ public class Ball extends Circle {
         return xVelocity != 0 && yVelocity != 0;
     }
 
-    public double getStartX() {
-        return startX;
-    }
-
-    public double getStartY() {
-        return startY;
-    }
-
     public double getLeft() {
         return getCenterX() - radius;
     }
@@ -92,20 +82,43 @@ public class Ball extends Circle {
         return getCenterY() - radius;
     }
 
+    public double getBottom() {
+        return getCenterY() + radius;
+    }
+
+    private void reverseXVelocity() {
+        setXVelocity(-1 * xVelocity);
+    }
+
+    private void reverseYVelocity() {
+        setYVelocity(-1 * yVelocity);
+    }
+
     private boolean intersectBottom(Rectangle b){
-        return getCenterY() + radius >= b.getY() - b.getArcHeight();
+        System.out.println("A");
+        System.out.println(getBottom());
+        System.out.println(b.getY() + b.getHeight());
+        return getBottom() >= b.getY() + b.getHeight();
     }
 
     private boolean intersectTop(Rectangle b){
-        return getCenterY() - radius <= b.getY();
+        System.out.println("B");
+        System.out.println(getTop());
+        System.out.println(b.getY());
+        return getTop() <= b.getY();
     }
 
     private boolean intersectLeft(Rectangle b){
-        return getCenterX() + radius >= b.getX();
+        System.out.println("C");
+        System.out.println(getLeft());
+        System.out.println(b.getX());
+        return getLeft() <= b.getX();
     }
 
     private boolean intersectRight(Rectangle b){
-        return getCenterX() - radius <= b.getY() + b.getArcWidth();
+        System.out.println("D");
+        System.out.println(getRight());
+        System.out.println(b.getX() + b.getWidth());
+        return getRight() >= b.getX() + b.getWidth();
     }
-
 }
