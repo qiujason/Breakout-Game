@@ -1,4 +1,5 @@
 package breakout;
+import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -12,9 +13,11 @@ public class Game {
     private ScoreDisplay scoreDisplay;
     private LivesDisplay livesDisplay;
     private boolean pause = false;
+    private int level;
+    private Group root;
 
     public Game(GameLauncher gameLauncher, LivesDisplay livesDisplay, ScoreDisplay scoreDisplay,
-                Ball ball, Paddle paddle, Block[][] gridOfBlocks) {
+                Ball ball, Paddle paddle, Block[][] gridOfBlocks, int level, Group root) {
         this.gameLauncher = gameLauncher;
         this.livesDisplay = livesDisplay;
         this.scoreDisplay = scoreDisplay;
@@ -22,6 +25,8 @@ public class Game {
         this.paddle = paddle;
         this.startGridOfBlocks = gridOfBlocks;
         this.gridOfBlocks = gridOfBlocks;
+        this.level = level;
+        this.root = root;
     }
 
     public void handleMouseInput(double x, double y) {
@@ -46,10 +51,16 @@ public class Game {
         checkGameStatus();
     }
 
-    public void reset() {
+    public void resetLevel() {
+        resetBallPaddle();
+        clearLevel();
+        BlockConfigurationReader levelReader = new BlockConfigurationReader();
+        gridOfBlocks = levelReader.loadLevel(root, level);
+    }
+
+    public void resetBallPaddle(){
         ball.reset();
         paddle.reset();
-        gridOfBlocks = startGridOfBlocks;
     }
 
     public void clearLevel() {
@@ -107,7 +118,7 @@ public class Game {
         } else if (ball.getTop() <= GameStatus.DISPLAYHEIGHT) {
             ball.reverseYVelocity();
         } else if (ball.getTop() > GameStatus.WINDOWHEIGHT) { // goes below the screen
-            reset();
+            resetBallPaddle();
             livesDisplay.subtractLife();
         }
     }
@@ -117,6 +128,8 @@ public class Game {
         if (hasWon()) {
             gameMessage.setText("You Passed This Level!");
             gameMessage.setId("winMessage");
+            loadNextLevel(this.level);
+            return;
         } else if (hasLost()) {
             gameMessage.setText("You Ran Out Of Lives! You lost!");
             gameMessage.setId("lossMessage");
@@ -124,7 +137,6 @@ public class Game {
             return;
         }
         pause = true;
-        reset();
         gameLauncher.addToRoot(gameMessage);
     }
 
@@ -163,11 +175,19 @@ public class Game {
 
     private void cheatKeys(KeyCode code) {
         switch (code) {
-            case R -> reset();
+            case R -> resetLevel();
             case SPACE -> setPause();
             case L -> livesDisplay.addLife();
 //            case P -> ;
             case C -> clearLevel();
         }
+    }
+
+    private void loadNextLevel(int level){
+        clearLevel();
+        this.level += 1;
+        BlockConfigurationReader levelReader = new BlockConfigurationReader();
+        gridOfBlocks = levelReader.loadLevel(root, this.level);
+        resetBallPaddle();
     }
 }

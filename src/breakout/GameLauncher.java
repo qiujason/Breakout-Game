@@ -40,17 +40,24 @@ public class GameLauncher extends Application {
         Paddle paddle = new Paddle(width/2.0 - GameStatus.PADDLEWIDTH/2, height - GameStatus.PADDLEHEIGHT,
                 GameStatus.PADDLEWIDTH, GameStatus.PADDLEHEIGHT, GameStatus.PADDLEDELTA, Color.RED); //TODO: Clean this
         root.getChildren().add(paddle);
-        BlockConfigurationReader levelReader = new BlockConfigurationReader();
-        Block[][] gridOfBlocks = levelReader.loadLevel(root, 1);
+        Block[][] gridOfBlocks = setUpLevel();
         setUpDisplayBar();
         LivesDisplay livesDisplay = setUpLivesDisplay();
         ScoreDisplay scoreDisplay = setUpScoreDisplay();
-        game = new Game(this, livesDisplay, scoreDisplay, ball, paddle, gridOfBlocks);
+        BlockConfigurationReader levelReader = new BlockConfigurationReader();
+        game = new Game(this, livesDisplay, scoreDisplay, ball, paddle, gridOfBlocks,
+                GameStatus.FIRST_LEVEL, root);
 
         Scene scene = new Scene(root, width, height, background);
         scene.setOnKeyPressed(e -> game.handleKeyInput(e.getCode()));
         scene.setOnMouseClicked(e -> game.handleMouseInput(e.getX(), e.getY()));
         return scene;
+    }
+
+    private Block[][] setUpLevel() {
+        BlockConfigurationReader levelReader = new BlockConfigurationReader();
+        Block[][] gridOfBlocks = levelReader.loadLevel(root, 1);
+        return gridOfBlocks;
     }
 
     private void setUpDisplayBar() {

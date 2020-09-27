@@ -25,4 +25,5 @@ public final class GameStatus {
     public static final double DISPLAYHEIGHT = 18;
     public static final int SCORE_DISPLAY_XPOS = WINDOWWIDTH - 65;
     public static final int SCORE_DISPLAY_YPOS = 15;
+    public static final int FIRST_LEVEL = 1;
 }
