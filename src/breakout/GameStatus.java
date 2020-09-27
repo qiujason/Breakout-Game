@@ -6,7 +6,7 @@ import javafx.scene.paint.Paint;
 public final class GameStatus {
     public static final int WINDOWHEIGHT = 600;
     public static final int WINDOWWIDTH = 500;
-    public static final Paint BACKGROUND = Color.BEIGE;
+    public static final Paint BACKGROUND = Color.web("#f0f8ff");
     public static final String TITLE = "Breakout"; //TODO: CHANGE LATER
     public static final int FRAMES_PER_SECOND = 60;
     public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;

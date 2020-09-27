@@ -6,9 +6,9 @@ import javafx.scene.shape.Rectangle;
 
 public class Block extends Rectangle {
 
-    private Paint ONE_HIT_BLOCK_COLOR = Color.BLUE;
-    private Paint TWO_HIT_BLOCK_COLOR = Color.RED;
-    private Paint THREE_HIT_BLOCK_COLOR = Color.YELLOW;
+    private Paint ONE_HIT_BLOCK_COLOR = Color.web("#bae1ff");
+    private Paint TWO_HIT_BLOCK_COLOR = Color.web("#ffb3ba");
+    private Paint THREE_HIT_BLOCK_COLOR = Color.web("#baffc9");
 
     private int lives;
 

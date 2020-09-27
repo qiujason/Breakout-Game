@@ -4,13 +4,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-import java.io.FileNotFoundException;
 
 public class Game {
     private final GameLauncher gameLauncher;
     private final Ball ball;
     private final Paddle paddle;
-    private final Block[][] startGridOfBlocks;
     private Block[][] gridOfBlocks;
     private ScoreDisplay scoreDisplay;
     private LivesDisplay livesDisplay;
@@ -25,7 +23,6 @@ public class Game {
         this.scoreDisplay = scoreDisplay;
         this.ball = ball;
         this.paddle = paddle;
-        this.startGridOfBlocks = gridOfBlocks;
         this.gridOfBlocks = gridOfBlocks;
         this.level = level;
         this.root = root;
