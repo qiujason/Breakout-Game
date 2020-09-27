@@ -1,8 +1,9 @@
 package breakout;
-import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+
+import java.io.FileNotFoundException;
 
 
 public class Game {
@@ -49,9 +50,14 @@ public class Game {
     }
 
     public void resetLevel()  {
-        resetBallPaddle();
-        clearLevel();
-        gridOfBlocks = gameLauncher.setUpLevel(level);
+        try {
+            resetBallPaddle();
+            clearLevel();
+            gridOfBlocks = gameLauncher.setUpLevel(level);
+        } catch (FileNotFoundException e) {
+            System.out.println("File Not Found");
+            System.exit(1);
+        }
     }
 
     public void resetBallPaddle(){
@@ -186,7 +192,7 @@ public class Game {
             gridOfBlocks = gameLauncher.setUpLevel(level);
             resetBallPaddle();
         }
-        catch(Exception e) {
+        catch(FileNotFoundException e) {
             Text gameMessage = new Text(150, 300, "WOWOWOW!!! YOU BEAT THE WHOLE GAME");
             gameLauncher.addToRoot(gameMessage);
             resetBallPaddle();

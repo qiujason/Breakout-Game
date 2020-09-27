@@ -26,28 +26,22 @@ public class BlockConfigurationReader {
         }
     }
 
-    public Block[][] loadLevel(Group root, int level) {
-        try {
-            Block[][] gridOfBlocks = new Block[getRowNum(level)][getColNum(level)];
-            readInBlocks(level, gridOfBlocks);
-            for (int i = 0; i < gridOfBlocks.length; i++) {
-                for (int j = 0; j < gridOfBlocks[i].length; j++) {
-                    Block block = gridOfBlocks[i][j];
-                    if (block.getLives() > 0) {
-                        block.setId("block" + i + j);
-                        root.getChildren().add(block);
-                    }
+    public Block[][] loadLevel(Group root, int level) throws FileNotFoundException {
+        Block[][] gridOfBlocks = new Block[getRowNum(level)][getColNum(level)];
+        readInBlocks(level, gridOfBlocks);
+        for (int i = 0; i < gridOfBlocks.length; i++) {
+            for (int j = 0; j < gridOfBlocks[i].length; j++) {
+                Block block = gridOfBlocks[i][j];
+                if (block.getLives() > 0) {
+                    block.setId("block" + i + j);
+                    root.getChildren().add(block);
                 }
             }
-            return gridOfBlocks;
-        } catch (FileNotFoundException e) {
-            System.out.println("File Not Found");
-            System.exit(1);
         }
-        return null;
+        return gridOfBlocks;
     }
 
-    public int getRowNum(int level) throws FileNotFoundException {
+    private int getRowNum(int level) throws FileNotFoundException {
         String filePath = directory + "level" + level + ".txt";
         Scanner scanner = new Scanner(new File(filePath));
         int numOfRows = 0;
@@ -58,14 +52,11 @@ public class BlockConfigurationReader {
         return numOfRows;
     }
 
-    public int getColNum(int level) throws FileNotFoundException {
+    private int getColNum(int level) throws FileNotFoundException {
         String filePath = directory + "level" + level + ".txt";
         Scanner scanner = new Scanner(new File(filePath));
-        while (scanner.hasNextLine()) {
-            String[] columns = scanner.nextLine().split(" ");
-            return columns.length;
-        }
-        return -1;
+        String[] columns = scanner.nextLine().split(" ");
+        return columns.length;
     }
 }
 

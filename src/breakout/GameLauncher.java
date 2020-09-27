@@ -12,6 +12,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 public class GameLauncher extends Application {
     private Group root;
     private Game game;
@@ -40,19 +43,23 @@ public class GameLauncher extends Application {
         Paddle paddle = new Paddle(width/2.0 - GameStatus.PADDLEWIDTH/2, height - GameStatus.PADDLEHEIGHT,
                 GameStatus.PADDLEWIDTH, GameStatus.PADDLEHEIGHT, GameStatus.PADDLEDELTA, Color.web("#6897bb")); //TODO: Clean this
         root.getChildren().add(paddle);
-        Block[][] gridOfBlocks = setUpLevel(GameStatus.FIRST_LEVEL);
         setUpDisplayBar();
         LivesDisplay livesDisplay = setUpLivesDisplay();
         ScoreDisplay scoreDisplay = setUpScoreDisplay();
-        game = new Game(this, livesDisplay, scoreDisplay, ball, paddle, gridOfBlocks);
-
+        try {
+            Block[][] gridOfBlocks = setUpLevel(GameStatus.FIRST_LEVEL);
+            game = new Game(this, livesDisplay, scoreDisplay, ball, paddle, gridOfBlocks);
+        } catch (FileNotFoundException e) {
+            System.out.println("File Not Found");
+            System.exit(1);
+        }
         Scene scene = new Scene(root, width, height, background);
         scene.setOnKeyPressed(e -> game.handleKeyInput(e.getCode()));
         scene.setOnMouseClicked(e -> game.handleMouseInput(e.getX()));
         return scene;
     }
 
-    public Block[][] setUpLevel(int level) {
+    public Block[][] setUpLevel(int level) throws FileNotFoundException {
         BlockConfigurationReader levelReader = new BlockConfigurationReader();
         return levelReader.loadLevel(root, level);
     }
