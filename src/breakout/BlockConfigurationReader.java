@@ -42,6 +42,7 @@ public class BlockConfigurationReader {
             return gridOfBlocks;
         } catch (FileNotFoundException e) {
             System.out.println("File Not Found");
+            System.exit(1);
         }
         return null;
     }
