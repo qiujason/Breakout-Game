@@ -40,27 +40,21 @@ public class GameLauncher extends Application {
         Paddle paddle = new Paddle(width/2.0 - GameStatus.PADDLEWIDTH/2, height - GameStatus.PADDLEHEIGHT,
                 GameStatus.PADDLEWIDTH, GameStatus.PADDLEHEIGHT, GameStatus.PADDLEDELTA, Color.web("#6897bb")); //TODO: Clean this
         root.getChildren().add(paddle);
-        Block[][] gridOfBlocks = setUpLevel();
+        Block[][] gridOfBlocks = setUpLevel(GameStatus.FIRST_LEVEL);
         setUpDisplayBar();
         LivesDisplay livesDisplay = setUpLivesDisplay();
         ScoreDisplay scoreDisplay = setUpScoreDisplay();
-        BlockConfigurationReader levelReader = new BlockConfigurationReader();
-        game = new Game(this, livesDisplay, scoreDisplay, ball, paddle, gridOfBlocks,
-                GameStatus.FIRST_LEVEL, root);
+        game = new Game(this, livesDisplay, scoreDisplay, ball, paddle, gridOfBlocks);
 
         Scene scene = new Scene(root, width, height, background);
         scene.setOnKeyPressed(e -> game.handleKeyInput(e.getCode()));
-        scene.setOnMouseClicked(e -> game.handleMouseInput(e.getX(), e.getY()));
+        scene.setOnMouseClicked(e -> game.handleMouseInput(e.getX()));
         return scene;
     }
 
-    private Block[][] setUpLevel() {
-        try{
-            BlockConfigurationReader levelReader = new BlockConfigurationReader();
-            Block[][] gridOfBlocks = levelReader.loadLevel(root, 1);
-            return gridOfBlocks;
-        } catch(Exception e){}
-        return null;
+    public Block[][] setUpLevel(int level) {
+        BlockConfigurationReader levelReader = new BlockConfigurationReader();
+        return levelReader.loadLevel(root, level);
     }
 
     private void setUpDisplayBar() {
@@ -89,7 +83,7 @@ public class GameLauncher extends Application {
         root.getChildren().remove(element);
     }
 
-    public static void main (String[] args) {
+    public static void main(String[] args) {
         launch(args);
     }
 }

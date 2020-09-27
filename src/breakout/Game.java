@@ -9,29 +9,27 @@ public class Game {
     private final GameLauncher gameLauncher;
     private final Ball ball;
     private final Paddle paddle;
+    private final ScoreDisplay scoreDisplay;
+    private final LivesDisplay livesDisplay;
     private Block[][] gridOfBlocks;
-    private ScoreDisplay scoreDisplay;
-    private LivesDisplay livesDisplay;
     private boolean pause = false;
     private int level;
-    private Group root;
 
     public Game(GameLauncher gameLauncher, LivesDisplay livesDisplay, ScoreDisplay scoreDisplay,
-                Ball ball, Paddle paddle, Block[][] gridOfBlocks, int level, Group root) {
+                Ball ball, Paddle paddle, Block[][] gridOfBlocks) {
         this.gameLauncher = gameLauncher;
         this.livesDisplay = livesDisplay;
         this.scoreDisplay = scoreDisplay;
         this.ball = ball;
         this.paddle = paddle;
         this.gridOfBlocks = gridOfBlocks;
-        this.level = level;
-        this.root = root;
+        this.level = GameStatus.FIRST_LEVEL;
     }
 
-    public void handleMouseInput(double x, double y) {
+    public void handleMouseInput(double x) {
         if (ball.getXVelocity() == 0 && ball.getYVelocity() == 0) {
             ball.setXVelocity(x - GameStatus.WINDOWWIDTH/2.0);
-            ball.setYVelocity(-250);
+            ball.setYVelocity(-100);
         }
     }
 
@@ -53,11 +51,7 @@ public class Game {
     public void resetLevel()  {
         resetBallPaddle();
         clearLevel();
-        BlockConfigurationReader levelReader = new BlockConfigurationReader();
-        try{
-            gridOfBlocks = levelReader.loadLevel(root, level);
-        }
-        catch(Exception e){}
+        gridOfBlocks = gameLauncher.setUpLevel(level);
     }
 
     public void resetBallPaddle(){
@@ -66,10 +60,10 @@ public class Game {
     }
 
     public void clearLevel() {
-        for (int i = 0; i < gridOfBlocks.length; i++) {
-            for (int j = 0; j < gridOfBlocks[0].length; j++) {
-                gridOfBlocks[i][j].setLives(0);
-                gameLauncher.removeFromRoot(gridOfBlocks[i][j]);
+        for (Block[] rowOfBlocks : gridOfBlocks) {
+            for (Block block : rowOfBlocks) {
+                block.setLives(0);
+                gameLauncher.removeFromRoot(block);
             }
         }
     }
@@ -103,6 +97,17 @@ public class Game {
         }
     }
 
+    private void checkBorderCollision() {
+        if (ball.getLeft() <= 0 || ball.getRight() >= GameStatus.WINDOWWIDTH) {
+            ball.updateXVelocityUponBorderCollision();
+        } else if (ball.getTop() <= GameStatus.DISPLAYHEIGHT) {
+            ball.updateYVelocityUponBorderCollision();
+        } else if (ball.getTop() > GameStatus.WINDOWHEIGHT) { // goes below the screen
+            resetBallPaddle();
+            livesDisplay.subtractLife();
+        }
+    }
+
     private boolean isIntersectingWithBall(Rectangle gamePiece) {
         return gamePiece.getBoundsInParent().intersects(ball.getBoundsInParent());
     }
@@ -111,17 +116,6 @@ public class Game {
         block.subtractLife();
         if (block.getLives() == 0) {
             gameLauncher.removeFromRoot(block);
-        }
-    }
-
-    private void checkBorderCollision() {
-        if (ball.getLeft() <= 0 || ball.getRight() >= GameStatus.WINDOWWIDTH) {
-            ball.reverseXVelocity();
-        } else if (ball.getTop() <= GameStatus.DISPLAYHEIGHT) {
-            ball.reverseYVelocity();
-        } else if (ball.getTop() > GameStatus.WINDOWHEIGHT) { // goes below the screen
-            resetBallPaddle();
-            livesDisplay.subtractLife();
         }
     }
 
@@ -186,14 +180,13 @@ public class Game {
     }
 
     private void loadNextLevel(){
-        try{
+        try {
             clearLevel();
-            this.level += 1;
-            BlockConfigurationReader levelReader = new BlockConfigurationReader();
-            gridOfBlocks = levelReader.loadLevel(root, this.level);
+            level += 1;
+            gridOfBlocks = gameLauncher.setUpLevel(level);
             resetBallPaddle();
         }
-        catch(Exception e){
+        catch(Exception e) {
             Text gameMessage = new Text(150, 300, "WOWOWOW!!! YOU BEAT THE WHOLE GAME");
             gameLauncher.addToRoot(gameMessage);
             resetBallPaddle();
