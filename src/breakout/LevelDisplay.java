@@ -8,8 +8,7 @@ public class LevelDisplay extends NumericDisplay{
         this.level = 1;
     }
 
-    @Override
-    public void changeDisplayValue() {
+    public void incrementLevel() {
         level += 1;
         updateDisplay();
     }

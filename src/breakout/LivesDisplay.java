@@ -1,6 +1,7 @@
 package breakout;
 
 public class LivesDisplay extends NumericDisplay {
+
     int lives;
 
     public LivesDisplay() {
@@ -13,21 +14,15 @@ public class LivesDisplay extends NumericDisplay {
     }
 
 
-    public void setLives(int lives){
-        this.lives = lives;
-    }
-
-    @Override
-    public void changeDisplayValue() {
-        setLives(lives - 1);
+    public void addLife() {
+        lives += 1;
         updateDisplay();
     }
 
-    public void addLife(){
-        setLives(lives + 1);
+    public void subtractLife(){
+        lives -= 1;
         updateDisplay();
     }
-
 
     public void updateDisplay() {
         setText("Lives: " + lives);

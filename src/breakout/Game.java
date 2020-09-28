@@ -13,12 +13,14 @@ public class Game {
     private final ScoreDisplay scoreDisplay;
     private final LivesDisplay livesDisplay;
     private final LevelDisplay levelDisplay;
+    private final HighScoreDisplay highScoreDisplay;
     private Block[][] gridOfBlocks;
     private boolean pause = false;
     private int level;
 
     public Game(GameLauncher gameLauncher, LivesDisplay livesDisplay, ScoreDisplay scoreDisplay,
-                LevelDisplay levelDisplay, Ball ball, Paddle paddle, Block[][] gridOfBlocks) {
+                LevelDisplay levelDisplay, Ball ball, Paddle paddle, Block[][] gridOfBlocks,
+                HighScoreDisplay highScoreDisplay) {
         this.gameLauncher = gameLauncher;
         this.livesDisplay = livesDisplay;
         this.scoreDisplay = scoreDisplay;
@@ -27,6 +29,7 @@ public class Game {
         this.paddle = paddle;
         this.gridOfBlocks = gridOfBlocks;
         this.level = GameStatus.FIRST_LEVEL;
+        this.highScoreDisplay = highScoreDisplay;
     }
 
     public void handleMouseInput(double x) {
@@ -52,15 +55,10 @@ public class Game {
     }
 
     public void resetLevel()  {
-        try {
-            resetBallPaddle();
-            clearLevel();
-            gridOfBlocks = gameLauncher.setUpLevel(level);
-            scoreDisplay.resetDisplayValue();
-        } catch (FileNotFoundException e) {
-            System.out.println("File Not Found");
-            System.exit(1);
-        }
+        resetBallPaddle();
+        clearLevel();
+        gridOfBlocks = gameLauncher.setUpLevel(level);
+        scoreDisplay.resetDisplayValue();
     }
 
     public void resetBallPaddle(){
@@ -100,7 +98,8 @@ public class Game {
                 if (currentBlock.getLives() > 0 && isIntersectingWithBall(currentBlock)) {
                     ball.updateVelocityUponCollision(currentBlock);
                     updateBlockStatus(currentBlock);
-                    scoreDisplay.changeDisplayValue();
+                    scoreDisplay.increaseScore();
+                    highScoreDisplay.updateHighScore(scoreDisplay.getScore());
                 }
             }
         }
@@ -113,7 +112,7 @@ public class Game {
             ball.updateYVelocityUponBorderCollision();
         } else if (ball.getTop() > GameStatus.WINDOWHEIGHT) { // goes below the screen
             resetBallPaddle();
-            livesDisplay.changeDisplayValue();
+            livesDisplay.subtractLife();
             scoreDisplay.resetBonus();
         }
     }
@@ -186,23 +185,63 @@ public class Game {
             case L -> livesDisplay.addLife();
 //            case P -> ;
             case C -> clearLevel();
+            case D -> clearFirstBlock();
+            case S -> highScoreDisplay.clearHighScore();
+            case F -> allBlocksLoseLife();
+            case DIGIT1 -> jumpToLevel(1);
+            case DIGIT2 -> jumpToLevel(2);
+            case DIGIT3 -> jumpToLevel(3);
+            case DIGIT4 -> jumpToLevel(4);
+            case DIGIT5 -> jumpToLevel(5);
+
         }
     }
 
-    private void loadNextLevel(){
-        try {
-            clearLevel();
-            level += 1;
-            gridOfBlocks = gameLauncher.setUpLevel(level);
-            scoreDisplay.setCheckPointScore();
-            levelDisplay.changeDisplayValue();
-            resetBallPaddle();
+    private void clearFirstBlock(){
+        Block blockToRemove = getFirstBlock();
+        blockToRemove.setLives(0);
+        gameLauncher.removeFromRoot(blockToRemove);
+    }
+
+    private void allBlocksLoseLife(){
+        for (int i = 0; i < gridOfBlocks.length; i++){
+            for (int j = 0; j < gridOfBlocks[0].length; j++){
+                if (gridOfBlocks[i][j].getLives() > 0){
+                    updateBlockStatus(gridOfBlocks[i][j]);
+                }
+            }
         }
-        catch(FileNotFoundException e) {
+    }
+
+    private void jumpToLevel(int level) {
+        gameLauncher.setUpLevel(level);
+    }
+
+    private Block getFirstBlock(){
+        for (int i = gridOfBlocks.length - 1; i >= 0; i--){
+            for (int j = 0; j <gridOfBlocks[0].length; j++){
+                if (gridOfBlocks[i][j].getLives() > 0){
+                    return gridOfBlocks[i][j];
+                }
+            }
+        }
+        return null;
+    }
+
+    private void loadNextLevel(){
+        BlockConfigurationReader blockReader = new BlockConfigurationReader();
+        int maxLevel = blockReader.getFileCount();
+        if (level >= maxLevel){
             Text gameMessage = new Text(150, 300, "WOWOWOW!!! YOU BEAT THE WHOLE GAME");
             gameLauncher.addToRoot(gameMessage);
             resetBallPaddle();
+            return;
         }
-
+        clearLevel();
+        level += 1;
+        gridOfBlocks = gameLauncher.setUpLevel(level);
+        scoreDisplay.setCheckPointScore();
+        levelDisplay.incrementLevel();
+        resetBallPaddle();
     }
 }

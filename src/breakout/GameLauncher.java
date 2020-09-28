@@ -47,13 +47,10 @@ public class GameLauncher extends Application {
         LivesDisplay livesDisplay = setUpLivesDisplay();
         ScoreDisplay scoreDisplay = setUpScoreDisplay();
         LevelDisplay levelDisplay = setUpLevelDisplay();
-        try {
-            Block[][] gridOfBlocks = setUpLevel(GameStatus.FIRST_LEVEL);
-            game = new Game(this, livesDisplay, scoreDisplay, levelDisplay, ball, paddle, gridOfBlocks);
-        } catch (FileNotFoundException e) {
-            System.out.println("File Not Found");
-            System.exit(1);
-        }
+        HighScoreDisplay highScoreDisplay = setUpHighScoreDisplay();
+        Block[][] gridOfBlocks = setUpLevel(GameStatus.FIRST_LEVEL);
+        game = new Game(this, livesDisplay, scoreDisplay,
+                levelDisplay, ball, paddle, gridOfBlocks, highScoreDisplay);
         Scene scene = new Scene(root, width, height, background);
         scene.setOnKeyPressed(e -> game.handleKeyInput(e.getCode()));
         scene.setOnMouseClicked(e -> game.handleMouseInput(e.getX()));
@@ -61,7 +58,7 @@ public class GameLauncher extends Application {
     }
 
 
-    public Block[][] setUpLevel(int level) throws FileNotFoundException {
+    public Block[][] setUpLevel(int level){
         BlockConfigurationReader levelReader = new BlockConfigurationReader();
         return levelReader.loadLevel(root, level);
     }
@@ -90,7 +87,15 @@ public class GameLauncher extends Application {
         return levelDisplay;
     }
 
-        public void addToRoot(Node element) {
+    public HighScoreDisplay setUpHighScoreDisplay(){
+        HighScoreReader highScoreReader = new HighScoreReader();
+        int highScore = highScoreReader.readInHighScore();
+        HighScoreDisplay highScoreDisplay = new HighScoreDisplay(highScore);
+        root.getChildren().add(highScoreDisplay);
+        return highScoreDisplay;
+    }
+
+    public void addToRoot(Node element) {
         root.getChildren().add(element);
     }
 

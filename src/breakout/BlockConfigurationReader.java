@@ -9,24 +9,28 @@ import java.util.Scanner;
 
 public class BlockConfigurationReader {
 
-    String directory = "blockfiles/";
+    private String directory = "data/blockfiles/";
 
-    public void readInBlocks(int level, Block[][] gridOfBlocks) throws FileNotFoundException {
+    public void readInBlocks(int level, Block[][] gridOfBlocks){
         String filePath = directory + "level" + level + ".txt";
-        Scanner scanner = new Scanner(new File(filePath));
-        int row = 0;
-        while (scanner.hasNextLine()) {
-            String[] blockLives = scanner.nextLine().split(" ");
-            for (int i = 0; i < gridOfBlocks[row].length; i++) {
-                double xPos = i * (getBlockWidth(level) + GameStatus.GAP) + GameStatus.GAP;
-                double yPos = row * (getBlockHeight(level) + GameStatus.GAP) + GameStatus.GAP + GameStatus.DISPLAYHEIGHT;
-                gridOfBlocks[row][i] = new Block(xPos, yPos, getBlockWidth(level), getBlockHeight(level), Integer.parseInt(blockLives[i]));
+        try{
+            Scanner scanner = new Scanner(new File(filePath));
+            int row = 0;
+            while (scanner.hasNextLine()) {
+                String[] blockLives = scanner.nextLine().split(" ");
+                for (int i = 0; i < gridOfBlocks[row].length; i++) {
+                    double xPos = i * (getBlockWidth(level) + GameStatus.GAP) + GameStatus.GAP;
+                    double yPos = row * (getBlockHeight(level) + GameStatus.GAP) + GameStatus.GAP + GameStatus.DISPLAYHEIGHT;
+                    gridOfBlocks[row][i] = new Block(xPos, yPos, getBlockWidth(level), getBlockHeight(level), Integer.parseInt(blockLives[i]));
+                }
+                row++;
             }
-            row++;
+        }catch (Exception e){
+            System.out.println("Invalid Block Configuration File!");
         }
     }
 
-    public Block[][] loadLevel(Group root, int level) throws FileNotFoundException {
+    public Block[][] loadLevel(Group root, int level){
         Block[][] gridOfBlocks = new Block[getRowNum(level)][getColNum(level)];
         readInBlocks(level, gridOfBlocks);
         for (int i = 0; i < gridOfBlocks.length; i++) {
@@ -41,31 +45,45 @@ public class BlockConfigurationReader {
         return gridOfBlocks;
     }
 
-    private int getRowNum(int level) throws FileNotFoundException {
-        String filePath = directory + "level" + level + ".txt";
-        Scanner scanner = new Scanner(new File(filePath));
-        int numOfRows = 0;
-        while (scanner.hasNextLine()) {
-            numOfRows++;
-            scanner.nextLine();
+    private int getRowNum(int level){
+        try{
+            String filePath = directory + "level" + level + ".txt";
+            Scanner scanner = new Scanner(new File(filePath));
+            int numOfRows = 0;
+            while (scanner.hasNextLine()) {
+                numOfRows++;
+                scanner.nextLine();
+            }
+            return numOfRows;
+        } catch (Exception e){
+            System.out.println("Invalid Block Configuration File!");
+            return -1;
         }
-        return numOfRows;
     }
 
-    private int getColNum(int level) throws FileNotFoundException {
-        String filePath = directory + "level" + level + ".txt";
-        Scanner scanner = new Scanner(new File(filePath));
-        String[] columns = scanner.nextLine().split(" ");
-        return columns.length;
+    private int getColNum(int level){
+        try{
+            String filePath = directory + "level" + level + ".txt";
+            Scanner scanner = new Scanner(new File(filePath));
+            String[] columns = scanner.nextLine().split(" ");
+            return columns.length;
+        }catch(Exception e){
+            System.out.println("Invalid Block Configuration File!");
+            return -1;
+        }
     }
 
-    private double getBlockWidth(int level) throws FileNotFoundException {
+    private double getBlockWidth(int level){
         return (GameStatus.WINDOWWIDTH - (getColNum(level) + 1) * GameStatus.GAP) / (double)getColNum(level);
     }
 
-    private double getBlockHeight(int level) throws FileNotFoundException {
+    private double getBlockHeight(int level){
         return ((double)GameStatus.WINDOWHEIGHT/2.5 - (getRowNum(level) + 1) * GameStatus.GAP) / (double)getRowNum(level);
     }
 
+    public int getFileCount(){
+        File folder = new File(directory);
+        return folder.list().length;
+    }
 }
 

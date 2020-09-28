@@ -10,8 +10,6 @@ public abstract class NumericDisplay extends Text {
         setY(yPos);
     }
 
-    public abstract void changeDisplayValue();
-
     public abstract void updateDisplay();
 
     public abstract void resetDisplayValue();

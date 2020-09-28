@@ -14,8 +14,8 @@ public class ScoreDisplay extends NumericDisplay {
         this.checkPointScore = 0;
     }
 
-    @Override
-    public void changeDisplayValue() {
+
+    public void increaseScore() {
         score += POINT_VALUE_PER_HIT + bonus;
         bonus += CONSECUTIVE_HIT_BONUS;
         updateDisplay();
@@ -31,6 +31,10 @@ public class ScoreDisplay extends NumericDisplay {
         score = checkPointScore;
         resetBonus();
         updateDisplay();
+    }
+
+    public int getScore(){
+        return score;
     }
 
     public void resetBonus() {
