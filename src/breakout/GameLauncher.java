@@ -46,9 +46,10 @@ public class GameLauncher extends Application {
         setUpDisplayBar();
         LivesDisplay livesDisplay = setUpLivesDisplay();
         ScoreDisplay scoreDisplay = setUpScoreDisplay();
+        LevelDisplay levelDisplay = setUpLevelDisplay();
         try {
             Block[][] gridOfBlocks = setUpLevel(GameStatus.FIRST_LEVEL);
-            game = new Game(this, livesDisplay, scoreDisplay, ball, paddle, gridOfBlocks);
+            game = new Game(this, livesDisplay, scoreDisplay, levelDisplay, ball, paddle, gridOfBlocks);
         } catch (FileNotFoundException e) {
             System.out.println("File Not Found");
             System.exit(1);
@@ -58,6 +59,7 @@ public class GameLauncher extends Application {
         scene.setOnMouseClicked(e -> game.handleMouseInput(e.getX()));
         return scene;
     }
+
 
     public Block[][] setUpLevel(int level) throws FileNotFoundException {
         BlockConfigurationReader levelReader = new BlockConfigurationReader();
@@ -71,18 +73,24 @@ public class GameLauncher extends Application {
     }
 
     private LivesDisplay setUpLivesDisplay() {
-        LivesDisplay livesDisplay = new LivesDisplay(GameStatus.LIVES, GameStatus.LIVES_DISPLAY_XPOS, GameStatus.LIVES_DISPLAY_YPOS);
+        LivesDisplay livesDisplay = new LivesDisplay();
         root.getChildren().add(livesDisplay);
         return livesDisplay;
     }
 
     private ScoreDisplay setUpScoreDisplay() {
-        ScoreDisplay scoreDisplay = new ScoreDisplay(GameStatus.SCORE_DISPLAY_XPOS, GameStatus.SCORE_DISPLAY_YPOS);
+        ScoreDisplay scoreDisplay = new ScoreDisplay();
         root.getChildren().add(scoreDisplay);
         return scoreDisplay;
     }
 
-    public void addToRoot(Node element) {
+    private LevelDisplay setUpLevelDisplay() {
+        LevelDisplay levelDisplay = new LevelDisplay();
+        root.getChildren().add(levelDisplay);
+        return levelDisplay;
+    }
+
+        public void addToRoot(Node element) {
         root.getChildren().add(element);
     }
 

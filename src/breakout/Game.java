@@ -12,15 +12,17 @@ public class Game {
     private final Paddle paddle;
     private final ScoreDisplay scoreDisplay;
     private final LivesDisplay livesDisplay;
+    private final LevelDisplay levelDisplay;
     private Block[][] gridOfBlocks;
     private boolean pause = false;
     private int level;
 
     public Game(GameLauncher gameLauncher, LivesDisplay livesDisplay, ScoreDisplay scoreDisplay,
-                Ball ball, Paddle paddle, Block[][] gridOfBlocks) {
+                LevelDisplay levelDisplay, Ball ball, Paddle paddle, Block[][] gridOfBlocks) {
         this.gameLauncher = gameLauncher;
         this.livesDisplay = livesDisplay;
         this.scoreDisplay = scoreDisplay;
+        this.levelDisplay = levelDisplay;
         this.ball = ball;
         this.paddle = paddle;
         this.gridOfBlocks = gridOfBlocks;
@@ -54,6 +56,7 @@ public class Game {
             resetBallPaddle();
             clearLevel();
             gridOfBlocks = gameLauncher.setUpLevel(level);
+            scoreDisplay.resetDisplayValue();
         } catch (FileNotFoundException e) {
             System.out.println("File Not Found");
             System.exit(1);
@@ -97,7 +100,7 @@ public class Game {
                 if (currentBlock.getLives() > 0 && isIntersectingWithBall(currentBlock)) {
                     ball.updateVelocityUponCollision(currentBlock);
                     updateBlockStatus(currentBlock);
-                    scoreDisplay.addScore();
+                    scoreDisplay.changeDisplayValue();
                 }
             }
         }
@@ -110,7 +113,8 @@ public class Game {
             ball.updateYVelocityUponBorderCollision();
         } else if (ball.getTop() > GameStatus.WINDOWHEIGHT) { // goes below the screen
             resetBallPaddle();
-            livesDisplay.subtractLife();
+            livesDisplay.changeDisplayValue();
+            scoreDisplay.resetBonus();
         }
     }
 
@@ -190,6 +194,8 @@ public class Game {
             clearLevel();
             level += 1;
             gridOfBlocks = gameLauncher.setUpLevel(level);
+            scoreDisplay.setCheckPointScore();
+            levelDisplay.changeDisplayValue();
             resetBallPaddle();
         }
         catch(FileNotFoundException e) {

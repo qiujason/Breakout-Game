@@ -16,10 +16,12 @@ public final class GameStatus {
     public static final int GAP = RADIUS;
     public static final double PADDLEDELTA = 20;
     public static final int LIVES = 3;
-    public static final int LIVES_DISPLAY_XPOS = 20;
-    public static final int LIVES_DISPLAY_YPOS = 15;
+    public static final int LIVES_DISPLAY_XPOS = 10;
+    public static final int DISPLAY_YPOS = 15;
+    public static final int LEVEL_DISPLAY_XPOS = 100;
     public static final double DISPLAYHEIGHT = 18;
     public static final int SCORE_DISPLAY_XPOS = WINDOWWIDTH - 65;
-    public static final int SCORE_DISPLAY_YPOS = 15;
     public static final int FIRST_LEVEL = 1;
+    public static final int START_SCORE = 0;
+    public static final int STARTING_LIVES = 3;
 }

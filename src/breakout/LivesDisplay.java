@@ -1,36 +1,41 @@
 package breakout;
 
-import javafx.scene.text.Text;
-
-public class LivesDisplay extends Text {
+public class LivesDisplay extends NumericDisplay {
     int lives;
 
-    public LivesDisplay(int lives, int x, int y) {
-        super("Lives: " + lives);
-        this.lives = lives;
-        setX(x);
-        setY(y);
+    public LivesDisplay() {
+        super("Lives", GameStatus.STARTING_LIVES, GameStatus.LIVES_DISPLAY_XPOS, GameStatus.DISPLAY_YPOS);
+        this.lives = 3;
     }
 
     public int getLives(){
         return lives;
     }
 
+
     public void setLives(int lives){
         this.lives = lives;
     }
 
-    public void subtractLife(){
+    @Override
+    public void changeDisplayValue() {
         setLives(lives - 1);
         updateDisplay();
     }
 
-    public void addLife() {
+    public void addLife(){
         setLives(lives + 1);
         updateDisplay();
     }
 
-    private void updateDisplay() {
+
+    public void updateDisplay() {
         setText("Lives: " + lives);
+    }
+
+    @Override
+    public void resetDisplayValue() {
+        lives = 3;
+        updateDisplay();
     }
 }
