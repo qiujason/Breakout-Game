@@ -17,6 +17,11 @@ public class LevelDisplay extends NumericDisplay{
         setText("Level: " + level);
     }
 
+    public void setLevel(int level){
+        this.level = level;
+        updateDisplay();
+    }
+
     @Override
     public void resetDisplayValue() {
         level = 0;

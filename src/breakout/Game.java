@@ -255,7 +255,9 @@ public class Game {
     }
 
     private void jumpToLevel(int level) {
+        clearLevel();
         gridOfGamePieces = gameLauncher.setUpLevel(level);
+        levelDisplay.setLevel(level);
     }
 
     private GamePiece getFirstBlock(){
