@@ -11,7 +11,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import java.io.FileNotFoundException;
 
 public class GameLauncher extends Application {
     private Group root;
@@ -44,20 +43,19 @@ public class GameLauncher extends Application {
         setUpDisplayBar();
         LivesDisplay livesDisplay = setUpLivesDisplay();
         ScoreDisplay scoreDisplay = setUpScoreDisplay();
-        try {
-            GamePiece[][] gridOfGamePieces = setUpLevel(GameStatus.FIRST_LEVEL);
-            game = new Game(this, livesDisplay, scoreDisplay, ball, paddle, gridOfGamePieces);
-        } catch (FileNotFoundException e) {
-            System.out.println("File Not Found");
-            System.exit(1);
-        }
+        LevelDisplay levelDisplay = setUpLevelDisplay();
+        HighScoreDisplay highScoreDisplay = setUpHighScoreDisplay();
+        GamePiece[][] gridOfGamePieces = setUpLevel(GameStatus.FIRST_LEVEL);
+        game = new Game(this, livesDisplay, scoreDisplay,
+                levelDisplay, ball, paddle, gridOfGamePieces, highScoreDisplay);
         Scene scene = new Scene(root, width, height, background);
         scene.setOnKeyPressed(e -> game.handleKeyInput(e.getCode()));
         scene.setOnMouseClicked(e -> game.handleMouseInput(e.getX()));
         return scene;
     }
 
-    public GamePiece[][] setUpLevel(int level) throws FileNotFoundException {
+
+    public GamePiece[][] setUpLevel(int level) {
         BlockConfigurationReader levelReader = new BlockConfigurationReader();
         return levelReader.loadLevel(root, level);
     }
@@ -69,15 +67,29 @@ public class GameLauncher extends Application {
     }
 
     private LivesDisplay setUpLivesDisplay() {
-        LivesDisplay livesDisplay = new LivesDisplay(GameStatus.LIVES, GameStatus.LIVES_DISPLAY_XPOS, GameStatus.LIVES_DISPLAY_YPOS);
+        LivesDisplay livesDisplay = new LivesDisplay();
         root.getChildren().add(livesDisplay);
         return livesDisplay;
     }
 
     private ScoreDisplay setUpScoreDisplay() {
-        ScoreDisplay scoreDisplay = new ScoreDisplay(GameStatus.SCORE_DISPLAY_XPOS, GameStatus.SCORE_DISPLAY_YPOS);
+        ScoreDisplay scoreDisplay = new ScoreDisplay();
         root.getChildren().add(scoreDisplay);
         return scoreDisplay;
+    }
+
+    private LevelDisplay setUpLevelDisplay() {
+        LevelDisplay levelDisplay = new LevelDisplay();
+        root.getChildren().add(levelDisplay);
+        return levelDisplay;
+    }
+
+    public HighScoreDisplay setUpHighScoreDisplay(){
+        HighScoreReader highScoreReader = new HighScoreReader();
+        int highScore = highScoreReader.readInHighScore();
+        HighScoreDisplay highScoreDisplay = new HighScoreDisplay(highScore);
+        root.getChildren().add(highScoreDisplay);
+        return highScoreDisplay;
     }
 
     public void addToRoot(Node element) {

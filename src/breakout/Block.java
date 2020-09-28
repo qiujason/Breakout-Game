@@ -13,8 +13,8 @@ public class Block extends Rectangle implements GamePiece {
 
     private int lives;
 
-    public Block(double x, double y, int lives) {
-        super(x, y, GamePiece.WIDTH, GamePiece.HEIGHT);
+    public Block(double x, double y, double width, double height, int lives) {
+        super(x, y, width, height);
         this.lives = lives;
         setFill(determineColor());
     }

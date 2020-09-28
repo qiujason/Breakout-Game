@@ -7,8 +7,8 @@ abstract class PowerUp extends Rectangle implements GamePiece {
 
     private int lives;
 
-    public PowerUp(double x, double y, int lives) {
-        super(x, y, GamePiece.WIDTH, GamePiece.HEIGHT);
+    public PowerUp(double x, double y, double width, double height, int lives) {
+        super(x, y, width, height);
         setLives(lives);
     }
 

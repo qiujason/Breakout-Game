@@ -15,20 +15,16 @@ public final class GameStatus {
     public static final int FRAMES_PER_SECOND = 60;
     public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
     public static final int RADIUS = 10;
-    public static final int NUMGRIDCOLUMNS = 5;
-    public static final int NUMGRIDROWS = 5;
     public static final double PADDLEWIDTH = 100;
     public static final double PADDLEHEIGHT = 15;
     public static final int GAP = RADIUS;
-    public static final double GAME_PIECE_WIDTH = (WINDOWWIDTH - (NUMGRIDCOLUMNS + 1) * GAP) / (double)NUMGRIDCOLUMNS;
-    public static final double GAME_PIECE_HEIGHT = ((double)WINDOWHEIGHT/2.5 - (NUMGRIDROWS + 1) * GAP) / (double)NUMGRIDROWS;
     public static final double PADDLEDELTA = 20;
-    public static final int LIVES = 3;
-    public static final int LIVES_DISPLAY_XPOS = 20;
-    public static final int LIVES_DISPLAY_YPOS = 15;
+    public static final int LIVES_DISPLAY_XPOS = 10;
+    public static final int DISPLAY_YPOS = 14;
+    public static final int LEVEL_DISPLAY_XPOS = 125;
+    public static final int HIGH_SCORE_DISPLAY_XPOS = 290;
     public static final double DISPLAYHEIGHT = 18;
     public static final int SCORE_DISPLAY_XPOS = WINDOWWIDTH - 65;
-    public static final int SCORE_DISPLAY_YPOS = 15;
     public static final int FIRST_LEVEL = 1;
     public static final double POWER_UP_PROBABILITY = 1;
     public static final List<Class<? extends PowerUp>> POWERUPS = new ArrayList<>(
@@ -37,4 +33,6 @@ public final class GameStatus {
                 AddLifePowerUp.class,
                 SlowDownPowerUp.class)
     );
+    public static final int START_SCORE = 0;
+    public static final int STARTING_LIVES = 3;
 }

@@ -1,42 +1,47 @@
 package breakout;
 
-import javafx.scene.text.Text;
-
-public class ScoreDisplay extends Text {
+public class ScoreDisplay extends NumericDisplay {
     private int score;
+    private int checkPointScore;
     private int bonus;
-    private final int POINT_VALUE = 100;
-    private final int START_BONUS = 10;
-    private final double BONUS_MULTIPLIER = 2;
+    private final int POINT_VALUE_PER_HIT = 10;
+    private final int CONSECUTIVE_HIT_BONUS = 5;
 
-    public ScoreDisplay(int x, int y) {
-        super("Score: " + 0);
-        setX(x);
-        setY(y);
+    public ScoreDisplay() {
+        super("Score", GameStatus.START_SCORE,GameStatus.SCORE_DISPLAY_XPOS,GameStatus.DISPLAY_YPOS);
         this.score = 0;
-        this.bonus = START_BONUS;
+        this.bonus = 0;
+        this.checkPointScore = 0;
     }
 
-    public void addScore() {
-        score += POINT_VALUE + bonus;
-        bonus *= BONUS_MULTIPLIER;
+
+    public void increaseScore() {
+        score += POINT_VALUE_PER_HIT + bonus;
+        bonus += CONSECUTIVE_HIT_BONUS;
         updateDisplay();
     }
 
-    private void updateDisplay() {
+    @Override
+    public void updateDisplay() {
         setText("Score: " + score);
     }
 
-    public void resetBonus() {
-        bonus = START_BONUS;
-    }
-
-    public void resetScore() {
-        score = 0;
+    @Override
+    public void resetDisplayValue() {
+        score = checkPointScore;
         resetBonus();
+        updateDisplay();
     }
 
-    public int getScore() {
+    public int getScore(){
         return score;
+    }
+
+    public void resetBonus() {
+        bonus = 0;
+    }
+
+    public void setCheckPointScore(){
+        checkPointScore = score;
     }
 }
