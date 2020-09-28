@@ -11,34 +11,34 @@ public class BlockConfigurationReader {
 
     String directory = "blockfiles/";
 
-    public void readInBlocks(int level, Block[][] gridOfBlocks) throws FileNotFoundException {
+    public void readInBlocks(int level, GamePiece[][] gridOfGamePieces) throws FileNotFoundException {
         String filePath = directory + "level" + level + ".txt";
         Scanner scanner = new Scanner(new File(filePath));
         int row = 0;
         while (scanner.hasNextLine()) {
-            String[] blockLives = scanner.nextLine().split(" ");
-            for (int i = 0; i < gridOfBlocks[row].length; i++) {
-                double xPos = i * (GameStatus.BLOCKWIDTH + GameStatus.GAP) + GameStatus.GAP;
-                double yPos = row * (GameStatus.BLOCKHEIGHT + GameStatus.GAP) + GameStatus.GAP + GameStatus.DISPLAYHEIGHT;
-                gridOfBlocks[row][i] = new Block(xPos, yPos, GameStatus.BLOCKWIDTH, GameStatus.BLOCKHEIGHT, Integer.parseInt(blockLives[i]));
+            String[] gamePieceLives = scanner.nextLine().split(" ");
+            for (int i = 0; i < gridOfGamePieces[row].length; i++) {
+                double xPos = i * (GameStatus.GAME_PIECE_WIDTH + GameStatus.GAP) + GameStatus.GAP;
+                double yPos = row * (GameStatus.GAME_PIECE_HEIGHT + GameStatus.GAP) + GameStatus.GAP + GameStatus.DISPLAYHEIGHT;
+                gridOfGamePieces[row][i] = new Block(xPos, yPos, Integer.parseInt(gamePieceLives[i]));
             }
             row++;
         }
     }
 
-    public Block[][] loadLevel(Group root, int level) throws FileNotFoundException {
-        Block[][] gridOfBlocks = new Block[getRowNum(level)][getColNum(level)];
-        readInBlocks(level, gridOfBlocks);
-        for (int i = 0; i < gridOfBlocks.length; i++) {
-            for (int j = 0; j < gridOfBlocks[i].length; j++) {
-                Block block = gridOfBlocks[i][j];
+    public GamePiece[][] loadLevel(Group root, int level) throws FileNotFoundException {
+        GamePiece[][] gridOfGamePieces = new GamePiece[getRowNum(level)][getColNum(level)];
+        readInBlocks(level, gridOfGamePieces);
+        for (int i = 0; i < gridOfGamePieces.length; i++) {
+            for (int j = 0; j < gridOfGamePieces[i].length; j++) {
+                Block block = (Block)gridOfGamePieces[i][j]; // all game pieces are currently blocks
                 if (block.getLives() > 0) {
                     block.setId("block" + i + j);
                     root.getChildren().add(block);
                 }
             }
         }
-        return gridOfBlocks;
+        return gridOfGamePieces;
     }
 
     private int getRowNum(int level) throws FileNotFoundException {

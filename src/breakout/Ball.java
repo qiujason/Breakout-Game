@@ -66,8 +66,8 @@ public class Ball extends Circle {
         return yVelocity;
     }
 
-    public boolean getInMotion() {
-        return xVelocity != 0 && yVelocity != 0;
+    public boolean notInMotion() {
+        return xVelocity == 0 || yVelocity == 0;
     }
 
     public double getLeft() {

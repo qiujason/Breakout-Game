@@ -7,12 +7,9 @@ public class Paddle extends Rectangle {
 
     private final double startX;
     private final double startY;
-    private final double delta;
 
-
-    public Paddle(double x, double y, double width, double height, double delta, Paint color) {
+    public Paddle(double x, double y, double width, double height, Paint color) {
         super(x, y, width, height);
-        this.delta = delta;
         startX = x;
         startY = y;
         setFill(color);
@@ -26,11 +23,11 @@ public class Paddle extends Rectangle {
         setY(startY);
     }
 
-    public double getStartX(){
-        return this.startX;
-    }
-
-    public double getStartY(){
-        return this.startY;
-    }
+//    public void changeWidth(double newWidth) {
+//        setWidth(newWidth);
+//    }
+//
+//    public void changeHeight(double newHeight) {
+//        setHeight(newWidth);
+//    }
 }
