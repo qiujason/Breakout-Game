@@ -10,7 +10,7 @@ public class SlowDownPowerUp extends PowerUp {
     public void updateGameStatus(Game game) {
         if (!super.isActive()) {
             game.scaleBallVelocity(0.5);
-            super.setActive(true);
+            super.setActive();
         }
     }
 

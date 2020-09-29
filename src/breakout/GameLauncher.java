@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -34,6 +35,9 @@ public class GameLauncher extends Application {
 
     private Scene setupScene(int width, int height, Paint background) {
         root = new Group();
+        Line border = new Line(0,300,500,300);
+        root.getChildren().add(border);
+        System.out.println(border.getEndY());
         Ball ball = new Ball(width / 2,
                 height - GameStatus.RADIUS - (int)GameStatus.PADDLEHEIGHT - 1, GameStatus.RADIUS, Color.web("#ff7f50"));
         root.getChildren().add(ball);
