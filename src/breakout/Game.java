@@ -86,9 +86,7 @@ public class Game {
         for (GamePiece[] rowOfGamePieces : gridOfGamePieces) {
             for (GamePiece gamePiece : rowOfGamePieces) {
                 gamePiece.setLives(0);
-                if (gamePiece instanceof Node) {
-                    gameLauncher.removeFromRoot((Node) gamePiece);
-                }
+                gameLauncher.removeFromRoot((Node) gamePiece);
             }
         }
     }
@@ -112,9 +110,19 @@ public class Game {
 
     private void updateShapes(double elapsedTime) {
         checkPaddleCollision();
-        checkBorderCollision();
         checkBallGamePieceCollision();
+        checkBorderBallCollision();
+        checkBorderBlockCollision(gridOfGamePieces);
+        updateBlockPositions(elapsedTime);
         ball.updatePosition(elapsedTime);
+    }
+
+    private void updateBlockPositions(double elapsedTime){
+        for (GamePiece[] gridOfGamePiece : gridOfGamePieces) {
+            for (int j = 0; j < gridOfGamePieces[0].length; j++) {
+                gridOfGamePiece[j].updatePosition(elapsedTime);
+            }
+        }
     }
 
     private void checkPaddleCollision() {
@@ -157,7 +165,7 @@ public class Game {
                 if (gamePiece instanceof PowerUp && activePowerUps.contains(gamePiece)) {
                     continue; // avoid collision of ball with falling power up
                 }
-                if (gamePiece.getLives() > 0 && gamePiece instanceof Rectangle && isIntersectingWithBall((Rectangle) gamePiece)) {
+                if (gamePiece.getLives() > 0 && isIntersectingWithBall((Rectangle) gamePiece)) {
                     ball.updateVelocityUponCollision((Rectangle) gamePiece);
                     updateGamePieceStatus(gamePiece, i, j);
                     scoreDisplay.increaseScore();
@@ -173,7 +181,7 @@ public class Game {
             PowerUp powerUp = (PowerUp)gamePiece;
             activePowerUps.add(powerUp); // put power up in to begin falling but has not been activated
         }
-        if (gamePiece.getLives() == 0 && gamePiece instanceof Node) {
+        if (gamePiece.getLives() == 0) {
             gameLauncher.removeFromRoot((Node) gamePiece);
             if (gamePiece instanceof Block) {
                 generatePowerUp((Block)gamePiece, i, j);
@@ -185,10 +193,12 @@ public class Game {
         if (Math.random() <= GameStatus.POWER_UP_PROBABILITY) {
             Random random = new Random();
             try {
+                //get random powerup class
                 Class<? extends PowerUp> powerUpClass = GameStatus.POWERUPS.get(random.nextInt(GameStatus.POWERUPS.size()));
                 Constructor<? extends PowerUp> powerUpConstructor = powerUpClass.getConstructor(double.class, double.class, double.class, double.class);
                 PowerUp powerUp = powerUpConstructor.newInstance(deletedBlock.getX() + deletedBlock.getWidth()/4, deletedBlock.getY(),
                         deletedBlock.getWidth()/2, deletedBlock.getHeight()); // half size of block and move it to center
+                powerUp.setId("block" + i + j);
                 gameLauncher.addToRoot(powerUp);
                 gridOfGamePieces[i][j] = powerUp;
             } catch(NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
@@ -196,6 +206,56 @@ public class Game {
             }
         }
     }
+    private void checkBorderBallCollision() {
+        if (ball.getLeft() <= 0 || ball.getRight() >= GameStatus.WINDOWWIDTH) {
+            ball.updateXVelocityUponBorderCollision();
+        } else if (ball.getTop() <= GameStatus.DISPLAYHEIGHT) {
+            ball.updateYVelocityUponBorderCollision();
+        } else if (ball.getTop() > GameStatus.WINDOWHEIGHT) { // goes below the screen
+            resetBallPaddle();
+            livesDisplay.subtractLife();
+            scoreDisplay.resetBonus();
+        }
+    }
+
+    private void checkBorderBlockCollision(GamePiece[][] gridOfGamePieces){
+        for (int i = 0; i < gridOfGamePieces.length; i++){
+            for (int j = 0; j < gridOfGamePieces[0].length; j++){
+                GamePiece block = gridOfGamePieces[i][j];
+                    if (block.getLives() > 0 && (block.getLeft() <= 0 || block.getRight() >= GameStatus.WINDOWWIDTH)) {
+                        changeXVelRow(block);
+                        break;
+                    }else{
+                        GamePiece columnBlock = gridOfGamePieces[j][i];
+                        if (columnBlock.getLives() > 0 && (columnBlock.getTop() <= GameStatus.DISPLAYHEIGHT  ||
+                                columnBlock.getBottom() >= 400)) {
+                            changeYVelCol(columnBlock);
+                            break;
+                        }
+                    }
+
+            }
+        }
+
+    }
+
+    private void changeXVelRow(GamePiece block){
+        int row = block.getRowPosition();
+        for (int i = 0; i < gridOfGamePieces[row].length; i++){
+            GamePiece change = gridOfGamePieces[row][i];
+            change.updateXVelocityUponCollision();
+        }
+    }
+
+    private void changeYVelCol(GamePiece block){
+        int col = block.getColPosition();
+        for (GamePiece[] gridOfGamePiece : gridOfGamePieces) {
+            GamePiece change = gridOfGamePiece[col];
+            change.updateYVelocityUponCollision();
+        }
+    }
+
+
 
     private boolean isIntersectingWithBall(Rectangle gamePiece) {
         return gamePiece.getBoundsInParent().intersects(ball.getBoundsInParent());
@@ -274,6 +334,7 @@ public class Game {
             case D -> clearFirstBlock();
             case S -> highScoreDisplay.clearHighScore();
             case F -> allBlocksLoseLife();
+            case G -> clearFirstRowBlock();
             case DIGIT1 -> jumpToLevel(1);
             case DIGIT2 -> jumpToLevel(2);
             case DIGIT3 -> jumpToLevel(3);
@@ -283,12 +344,18 @@ public class Game {
         }
     }
 
+    private void clearFirstRowBlock(){
+        GamePiece[] rowToRemove = getFirstRowBlock();
+        for(GamePiece block : rowToRemove){
+            block.setLives(0);
+            gameLauncher.removeFromRoot(block);
+        }
+    }
+
     private void clearFirstBlock(){
         GamePiece blockToRemove = getFirstBlock();
         blockToRemove.setLives(0);
-        if (blockToRemove instanceof Node) {
-            gameLauncher.removeFromRoot((Node)blockToRemove);
-        }
+        gameLauncher.removeFromRoot(blockToRemove);
     }
 
     private void allBlocksLoseLife(){
@@ -302,7 +369,10 @@ public class Game {
     }
 
     private void jumpToLevel(int level) {
+        clearLevel();
+        this.level = level;
         gridOfGamePieces = gameLauncher.setUpLevel(level);
+        levelDisplay.setLevel(level);
     }
 
     private GamePiece getFirstBlock(){
@@ -310,6 +380,17 @@ public class Game {
             for (int j = 0; j <gridOfGamePieces[0].length; j++){
                 if (gridOfGamePieces[i][j].getLives() > 0){
                     return gridOfGamePieces[i][j];
+                }
+            }
+        }
+        return null;
+    }
+
+    private GamePiece[] getFirstRowBlock(){
+        for (int i = gridOfGamePieces.length - 1; i >= 0; i--){
+            for (int j = 0; j <gridOfGamePieces[0].length; j++){
+                if (gridOfGamePieces[i][j].getLives() > 0){
+                    return gridOfGamePieces[i];
                 }
             }
         }

@@ -3,7 +3,7 @@ package breakout;
 import javafx.scene.Group;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 
@@ -16,12 +16,15 @@ public class BlockConfigurationReader {
         try {
             Scanner scanner = new Scanner(new File(filePath));
             int row = 0;
+            String movement = scanner.nextLine();
             while (scanner.hasNextLine()) {
                 String[] blockLives = scanner.nextLine().split(" ");
                 for (int i = 0; i < gridOfGamePieces[row].length; i++) {
                     double xPos = i * (getBlockWidth(level) + GameStatus.GAP) + GameStatus.GAP;
                     double yPos = row * (getBlockHeight(level) + GameStatus.GAP) + GameStatus.GAP + GameStatus.DISPLAYHEIGHT;
-                    gridOfGamePieces[row][i] = new Block(xPos, yPos, getBlockWidth(level), getBlockHeight(level), Integer.parseInt(blockLives[i]));
+                    gridOfGamePieces[row][i] = new Block(xPos, yPos, getBlockWidth(level), getBlockHeight(level),
+                            Integer.parseInt(blockLives[i]), movement);
+                    gridOfGamePieces[row][i].setMovement(movement, row, i);
                 }
                 row++;
             }
@@ -50,6 +53,7 @@ public class BlockConfigurationReader {
             String filePath = directory + "level" + level + ".txt";
             Scanner scanner = new Scanner(new File(filePath));
             int numOfRows = 0;
+            scanner.nextLine();
             while (scanner.hasNextLine()) {
                 numOfRows++;
                 scanner.nextLine();
@@ -65,6 +69,7 @@ public class BlockConfigurationReader {
         try{
             String filePath = directory + "level" + level + ".txt";
             Scanner scanner = new Scanner(new File(filePath));
+            scanner.nextLine();
             String[] columns = scanner.nextLine().split(" ");
             return columns.length;
         }catch(Exception e){

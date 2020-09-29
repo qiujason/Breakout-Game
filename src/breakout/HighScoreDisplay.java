@@ -14,8 +14,8 @@ public class HighScoreDisplay extends NumericDisplay{
     public void updateHighScore(int currentScore) {
         if (currentScore >= highScore){
             highScore = currentScore;
+            scoreReader.replaceHighScore(currentScore);
             updateDisplay();
-
         }
     }
 

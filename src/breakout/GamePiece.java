@@ -1,10 +1,102 @@
 package breakout;
 
-public interface GamePiece {
+import javafx.scene.shape.Rectangle;
 
-    int getLives();
+abstract class GamePiece extends Rectangle {
+    private int lives;
+    private double xVelocity;
+    private double yVelocity;
 
-    void setLives(int lives);
+    public GamePiece(double x, double y, double width, double height, int lives) {
+        super(x, y, width, height);
+        this.lives = lives;
+        xVelocity = 0;
+        yVelocity = 0;
+    }
 
-    void updateStatus();
+    public int getLives() {
+        return lives;
+    }
+
+    public void setLives(int lives) {
+        this.lives = lives;
+    }
+
+    public void subtractLife() {
+        this.lives -= 1;
+    }
+
+    public void setMovement(String movement, int row, int col){
+        switch (movement) {
+            case "sideways" -> setSidewaysMovement(row);
+            case "descending" -> setVerticalMovement(col);
+        }
+    }
+
+    public void updatePosition(double elapsedTime) {
+        setX(getX() + xVelocity * elapsedTime);
+        setY(getY() + yVelocity * elapsedTime);
+    }
+
+    public double getLeft() {
+        return getX();
+    }
+
+    public double getRight() {
+        return getX() + getWidth();
+    }
+
+    public double getTop() {
+        return getY();
+    }
+
+    public double getBottom() {
+        return getY() - getHeight();
+    }
+
+    public void updateXVelocityUponCollision() {
+        reverseXVelocity();
+    }
+
+    public void updateYVelocityUponCollision() {
+        reverseYVelocity();
+    }
+
+    private void reverseXVelocity(){
+        xVelocity *= -1;
+    }
+
+    private void reverseYVelocity(){
+        yVelocity *= -1;
+    }
+
+    private void setXVelocity(double xVelocity){
+        this.xVelocity = xVelocity;
+    }
+
+    private void setYVelocity(double yVelocity){
+        this.yVelocity = yVelocity;
+    }
+
+    public void setSidewaysMovement(int row){
+        if (row % 2 == 1){
+            setXVelocity(-50);
+        }else{
+            setXVelocity(50);
+        }
+    }
+
+    public void setVerticalMovement(int col){
+        setYVelocity(-50);
+    }
+
+    public int getRowPosition(){
+        return Integer.parseInt(this.getId().substring(5,6));
+    }
+
+    public int getColPosition(){
+        return Integer.parseInt(this.getId().substring(6,7));
+    }
+
+    abstract void updateStatus();
 }

@@ -1,35 +1,17 @@
 package breakout;
 
-import javafx.scene.shape.Rectangle;
 
+abstract class PowerUp extends GamePiece {
 
-abstract class PowerUp extends Rectangle implements GamePiece {
-
-    private int lives;
     private int timer;
     private boolean powerUpActive;
 
     public PowerUp(double x, double y, double width, double height, int lives) {
-        super(x, y, width, height);
-        setLives(lives);
+        super(x, y, width, height, lives);
         timer = GameStatus.POWER_UP_TIMER;
         powerUpActive = false;
     }
 
-    @Override
-    public int getLives() {
-        return lives;
-    }
-
-    @Override
-    public void setLives(int lives) {
-        this.lives = lives;
-    }
-
-    @Override
-    public void updateStatus() {
-        this.lives -= 1;
-    }
 
     public void dropDown(double elapsedTime) {
         setY(getY() + 50 * elapsedTime);
@@ -49,6 +31,10 @@ abstract class PowerUp extends Rectangle implements GamePiece {
 
     public boolean hasTimerEnded() {
         return timer <= 0;
+    }
+
+    public void updateStatus() {
+        subtractLife();
     }
 
     abstract void updateGameStatus(Game game);
