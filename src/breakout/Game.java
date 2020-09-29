@@ -99,9 +99,19 @@ public class Game {
 
     private void updateShapes(double elapsedTime) {
         checkPaddleCollision();
-        checkBorderCollision();
+        checkBorderBallCollision();
         checkGamePieceCollision();
+        checkBorderBlockCollision(gridOfGamePieces);
+        updateBlockPositions(elapsedTime);
         ball.updatePosition(elapsedTime);
+    }
+
+    private void updateBlockPositions(double elapsedTime){
+        for (int i = 0; i < gridOfGamePieces.length; i++){
+            for (int j = 0; j < gridOfGamePieces[0].length; j++){
+                gridOfGamePieces[i][j].updatePosition(elapsedTime);
+            }
+        }
     }
 
     private void checkPaddleCollision() {
@@ -154,7 +164,7 @@ public class Game {
             }
         }
     }
-    private void checkBorderCollision() {
+    private void checkBorderBallCollision() {
         if (ball.getLeft() <= 0 || ball.getRight() >= GameStatus.WINDOWWIDTH) {
             ball.updateXVelocityUponBorderCollision();
         } else if (ball.getTop() <= GameStatus.DISPLAYHEIGHT) {
@@ -165,6 +175,44 @@ public class Game {
             scoreDisplay.resetBonus();
         }
     }
+
+    private void checkBorderBlockCollision(GamePiece[][] gridOfGamePieces){
+        for (int i = 0; i < gridOfGamePieces.length; i++){
+            for (int j = 0; j < gridOfGamePieces[0].length; j++){
+                    Block block = (Block)gridOfGamePieces[i][j];
+                    if (block.getLives() > 0 && (block.getLeft() <= 0 || block.getRight() >= GameStatus.WINDOWWIDTH)) {
+                        changeXVelRow(block);
+                        break;
+                    }else{
+                        block = (Block)gridOfGamePieces[j][i];
+                        if (block.getLives() > 0 && (block.getTop() <= GameStatus.DISPLAYHEIGHT  || block.getBottom() >= 400)) {
+                            changeYVelCol(block);
+                            break;
+                        }
+                    }
+
+            }
+        }
+
+    }
+
+    private void changeXVelRow(Block block){
+        int row = block.getRowPosition();
+        for(int i = 0; i < gridOfGamePieces[row].length; i++){
+            Block change = (Block)gridOfGamePieces[row][i];
+            change.updateXVelocityUponCollision();
+        }
+    }
+
+    private void changeYVelCol(Block block){
+        int col = block.getColPosition();
+        for(int i = 0; i < gridOfGamePieces.length; i++){
+            Block change = (Block)gridOfGamePieces[i][col];
+            change.updateYVelocityUponCollision();
+        }
+    }
+
+
 
     private boolean isIntersectingWithBall(Rectangle gamePiece) {
         return gamePiece.getBoundsInParent().intersects(ball.getBoundsInParent());
@@ -227,12 +275,23 @@ public class Game {
             case D -> clearFirstBlock();
             case S -> highScoreDisplay.clearHighScore();
             case F -> allBlocksLoseLife();
+            case G -> clearFirstRowBlock();
             case DIGIT1 -> jumpToLevel(1);
             case DIGIT2 -> jumpToLevel(2);
             case DIGIT3 -> jumpToLevel(3);
             case DIGIT4 -> jumpToLevel(4);
             case DIGIT5 -> jumpToLevel(5);
 
+        }
+    }
+
+    private void clearFirstRowBlock(){
+        GamePiece[] rowToRemove = getFirstRowBlock();
+        for(GamePiece block : rowToRemove){
+            block.setLives(0);
+            if (block instanceof Node) {
+                gameLauncher.removeFromRoot((Node)block);
+            }
         }
     }
 
@@ -256,6 +315,7 @@ public class Game {
 
     private void jumpToLevel(int level) {
         clearLevel();
+        this.level = level;
         gridOfGamePieces = gameLauncher.setUpLevel(level);
         levelDisplay.setLevel(level);
     }
@@ -265,6 +325,17 @@ public class Game {
             for (int j = 0; j <gridOfGamePieces[0].length; j++){
                 if (gridOfGamePieces[i][j].getLives() > 0){
                     return gridOfGamePieces[i][j];
+                }
+            }
+        }
+        return null;
+    }
+
+    private GamePiece[] getFirstRowBlock(){
+        for (int i = gridOfGamePieces.length - 1; i >= 0; i--){
+            for (int j = 0; j <gridOfGamePieces[0].length; j++){
+                if (gridOfGamePieces[i][j].getLives() > 0){
+                    return gridOfGamePieces[i];
                 }
             }
         }
