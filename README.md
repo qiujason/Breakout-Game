@@ -39,6 +39,20 @@ Left Arrow Key: Moves paddle to the left.
 Right Arrow Key: Moves paddle to the right.
 
 Cheat keys:
+R -> resets level
+SPACE -> pauses game
+L -> adds 1 life
+P -> makes the first block into a random powerup
+C -> clears the level
+D -> clears the first block;
+S -> resets high score;
+F -> all remaining blocks on the screen lose one life();
+G -> clear the first (bottom-most) row();
+1 -> jump to level 1
+2 -> jump to level 2
+3 -> jump to level 3
+4 -> jump to level 4
+5 -> jump to level 5
 
 Known Bugs:
 
@@ -90,9 +104,24 @@ Places where we went above and beyond:
 ### Notes/Assumptions
 
 #####Assumptions
+Data file assumptions:
+1) blockfiles
+- The first line of all blockfiles must describe the type of block movement for the level.
+The possibilites are: "none", "sideways", and "descending".
+- All blocks are represented only by the number of lives they have, ranging from 0-3.
+- Blocks are delimited by spaces, and there must not be any empty rows or columns -- to
+represent no block, the correct representation 0, which tells the program that the block
+has 0 lives and thus no block will be shown there.
+
+2) highscore
+- the highscores file only contains one line which only contains one number: the all-time high score
 
 #####Notes
-
+For cheat keys, we defined "first block" as the first "alive" block in the bottom-most row, 
+on the left-most side of that row.
 
 ### Impressions
+Overall, the project was pretty enjoyable, definitely more so than the Data project in our
+opinion. It was fun to create a game from scratch, and it definitely leveraged a lot of what
+we learned on inheritance.
 
