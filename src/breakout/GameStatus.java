@@ -33,6 +33,9 @@ public final class GameStatus {
                 AddLifePowerUp.class,
                 SlowDownPowerUp.class)
     );
+    public static final String HEART_FILE_PATH = "data/images/heart.jpg";
+    public static final String EXPAND_PADDLE_FILE_PATH = "data/images/expandpaddle.png";
+    public static final String SLOW_DOWN_FILE_PATH = "data/images/snail.jpg";
     public static final int POWER_UP_TIMER = 10 * FRAMES_PER_SECOND;
     public static final int START_SCORE = 0;
     public static final int STARTING_LIVES = 3;

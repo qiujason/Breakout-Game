@@ -16,6 +16,7 @@ public class Game {
     private final LivesDisplay livesDisplay;
     private final LevelDisplay levelDisplay;
     private final HighScoreDisplay highScoreDisplay;
+    // warning indicates it is never updated, but it is updated through an iterator
     private final List<PowerUp> activePowerUps; // contains power ups that are falling or have been activated
     private final List<PowerUp> fallingPowerUps; // contains power ups that are falling
     private GamePiece[][] gridOfGamePieces;
@@ -375,8 +376,10 @@ public class Game {
 
     private void clearFirstBlock(){
         Block blockToRemove = getFirstBlock();
-        blockToRemove.setLives(0);
-        gameLauncher.removeFromRoot(blockToRemove);
+        if (blockToRemove != null) {
+            blockToRemove.setLives(0);
+            gameLauncher.removeFromRoot(blockToRemove);
+        }
     }
 
     private void allBlocksLoseLife(){
@@ -426,14 +429,13 @@ public class Game {
             Text gameMessage = new Text(150, 300, "WOWOWOW!!! YOU BEAT THE WHOLE GAME");
             gameMessage.setId("winGameMessage");
             gameLauncher.addToRoot(gameMessage);
-            resetBallPaddle();
         } else {
             clearLevel();
             level += 1;
             gridOfGamePieces = gameLauncher.setUpLevel(level);
             scoreDisplay.setCheckPointScore();
             levelDisplay.incrementLevel();
-            resetBallPaddle();
         }
+        resetBallPaddle();
     }
 }

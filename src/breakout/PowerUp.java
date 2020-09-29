@@ -1,16 +1,20 @@
 package breakout;
 
 
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
+
 public abstract class PowerUp extends GamePiece {
 
     private int timer;
     private boolean falling;
     private boolean powerUpActive;
 
-    public PowerUp(double x, double y, double width, double height) {
+    public PowerUp(double x, double y, double width, double height, Image image) {
         super(x, y, width, height, 2);
         timer = GameStatus.POWER_UP_TIMER;
         powerUpActive = false;
+        setFill(new ImagePattern(image));
     }
 
     public void beginFalling() {
@@ -33,7 +37,6 @@ public abstract class PowerUp extends GamePiece {
     public boolean isFalling() {
         return falling;
     }
-
 
     public void decrementTimer() {
         timer -= 1;

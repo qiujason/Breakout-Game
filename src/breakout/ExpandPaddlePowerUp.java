@@ -1,9 +1,13 @@
 package breakout;
 
+import javafx.scene.image.Image;
+
+import java.io.File;
+
 public class ExpandPaddlePowerUp extends PowerUp {
 
     public ExpandPaddlePowerUp(double x, double y, double width, double height) {
-        super(x, y, width, height);
+        super(x, y, width, height, new Image(new File(GameStatus.EXPAND_PADDLE_FILE_PATH).toURI().toString()));
     }
 
     @Override
