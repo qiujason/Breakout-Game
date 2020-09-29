@@ -2,7 +2,7 @@ package breakout;
 
 import javafx.scene.shape.Rectangle;
 
-abstract class GamePiece extends Rectangle {
+public abstract class GamePiece extends Rectangle {
     private int lives;
     private double xVelocity;
     private double yVelocity;

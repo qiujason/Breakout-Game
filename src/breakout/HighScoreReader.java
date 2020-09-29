@@ -1,21 +1,17 @@
 package breakout;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Scanner;
 
 public class HighScoreReader {
 
-    private String filePath = "data/highscore/highscores.txt" ;
+    private final String filePath = "data/highscore/highscores.txt" ;
 
     public int readInHighScore(){
         try{
             Scanner scanner = new Scanner(new File(filePath));
-            while (scanner.hasNextLine()) {
-                return Integer.parseInt(scanner.nextLine());
-            }
+            return Integer.parseInt(scanner.nextLine());
         }catch(Exception e){
             System.out.println("Invalid High Score File");
         }

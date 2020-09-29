@@ -3,7 +3,7 @@ package breakout;
 public class HighScoreDisplay extends NumericDisplay{
 
     private int highScore;
-    private HighScoreReader scoreReader;
+    private final HighScoreReader scoreReader;
 
     public HighScoreDisplay(int highScore){
         super("High Score", highScore, GameStatus.HIGH_SCORE_DISPLAY_XPOS, GameStatus.DISPLAY_YPOS);
@@ -33,5 +33,10 @@ public class HighScoreDisplay extends NumericDisplay{
         highScore = 0;
         scoreReader.replaceHighScore(highScore);
         updateDisplay();
+    }
+
+    // for testing
+    public int getHighScore() {
+        return highScore;
     }
 }

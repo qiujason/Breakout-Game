@@ -86,6 +86,13 @@ public class Ball extends Circle {
         return getCenterY() + radius;
     }
 
+    public double getStartX() {
+        return startX;
+    }
+    public double getStartY() {
+        return startY;
+    }
+
     private void reverseXVelocity() {
         setXVelocity(-1 * xVelocity);
     }

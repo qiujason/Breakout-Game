@@ -26,7 +26,7 @@ public final class GameStatus {
     public static final double DISPLAYHEIGHT = 18;
     public static final int SCORE_DISPLAY_XPOS = WINDOWWIDTH - 65;
     public static final int FIRST_LEVEL = 1;
-    public static final double POWER_UP_PROBABILITY = 1;
+    public static final double POWER_UP_PROBABILITY = 0.2;
     public static final List<Class<? extends PowerUp>> POWERUPS = new ArrayList<>(
         Arrays.asList(
                 ExpandPaddlePowerUp.class,

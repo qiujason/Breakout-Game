@@ -22,6 +22,10 @@ public class LevelDisplay extends NumericDisplay{
         updateDisplay();
     }
 
+    public int getLevel() {
+        return level;
+    }
+
     @Override
     public void resetDisplayValue() {
         level = 0;

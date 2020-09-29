@@ -23,7 +23,7 @@ public class BlockConfigurationReader {
                     double xPos = i * (getBlockWidth(level) + GameStatus.GAP) + GameStatus.GAP;
                     double yPos = row * (getBlockHeight(level) + GameStatus.GAP) + GameStatus.GAP + GameStatus.DISPLAYHEIGHT;
                     gridOfGamePieces[row][i] = new Block(xPos, yPos, getBlockWidth(level), getBlockHeight(level),
-                            Integer.parseInt(blockLives[i]), movement);
+                            Integer.parseInt(blockLives[i]));
                     gridOfGamePieces[row][i].setMovement(movement, row, i);
                 }
                 row++;

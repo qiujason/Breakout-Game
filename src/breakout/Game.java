@@ -1,5 +1,4 @@
 package breakout;
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -17,11 +16,10 @@ public class Game {
     private final LivesDisplay livesDisplay;
     private final LevelDisplay levelDisplay;
     private final HighScoreDisplay highScoreDisplay;
+    private final List<PowerUp> activePowerUps; // contains power ups that are falling or have been activated
     private GamePiece[][] gridOfGamePieces;
     private int level;
-    private List<PowerUp> activePowerUps; // contains power ups that are falling or have been activated
     private boolean pause;
-    private boolean powerUpPause;
 
     public Game(GameLauncher gameLauncher, LivesDisplay livesDisplay, ScoreDisplay scoreDisplay,
                 LevelDisplay levelDisplay, HighScoreDisplay highScoreDisplay, Ball ball,
@@ -37,14 +35,12 @@ public class Game {
         this.level = GameStatus.FIRST_LEVEL;
         this.activePowerUps = new ArrayList<>();
         this.pause = false;
-        this.powerUpPause = true;
     }
 
     public void handleMouseInput(double x) {
         if (ball.getXVelocity() == 0 && ball.getYVelocity() == 0) {
             ball.setXVelocity(x - GameStatus.WINDOWWIDTH/2.0);
             ball.setYVelocity(-150);
-            powerUpPause = false;
         }
     }
 
@@ -59,9 +55,7 @@ public class Game {
     public void step(double elapsedTime) {
         if (!pause) {
             updateShapes(elapsedTime);
-            if (!powerUpPause) {
-                updatePowerUps(elapsedTime);
-            }
+            updatePowerUps(elapsedTime);
         }
         checkGameStatus();
     }
@@ -76,16 +70,18 @@ public class Game {
     public void resetBallPaddle(){
         ball.reset();
         paddle.reset();
-        powerUpPause = true;
     }
 
     public void clearLevel() {
         for (GamePiece[] rowOfGamePieces : gridOfGamePieces) {
             for (GamePiece gamePiece : rowOfGamePieces) {
                 gamePiece.setLives(0);
-                gameLauncher.removeFromRoot((Node) gamePiece);
+                gameLauncher.removeFromRoot(gamePiece);
             }
         }
+        gameLauncher.removeFromRoot("#winMessage");
+        gameLauncher.removeFromRoot("#winGameMessage");
+        gameLauncher.removeFromRoot("#lossMessage");
     }
 
     public void setPause() {
@@ -143,18 +139,6 @@ public class Game {
         return null;
     }
 
-    private void checkBorderCollision() {
-        if (ball.getLeft() <= 0 || ball.getRight() >= GameStatus.WINDOWWIDTH) {
-            ball.updateXVelocityUponBorderCollision();
-        } else if (ball.getTop() <= GameStatus.DISPLAYHEIGHT) {
-            ball.updateYVelocityUponBorderCollision();
-        } else if (ball.getTop() > GameStatus.WINDOWHEIGHT) { // goes below the screen
-            resetBallPaddle();
-            livesDisplay.subtractLife();
-            scoreDisplay.resetBonus();
-        }
-    }
-
     private void checkBallGamePieceCollision() {
         for (int i = 0; i < gridOfGamePieces.length; i++) {
             for (int j = 0; j < gridOfGamePieces[i].length; j++) {
@@ -162,8 +146,8 @@ public class Game {
                 if (gamePiece instanceof PowerUp && activePowerUps.contains(gamePiece)) {
                     continue; // avoid collision of ball with falling power up
                 }
-                if (gamePiece.getLives() > 0 && isIntersectingWithBall((Rectangle) gamePiece)) {
-                    ball.updateVelocityUponCollision((Rectangle) gamePiece);
+                if (gamePiece.getLives() > 0 && isIntersectingWithBall(gamePiece)) {
+                    ball.updateVelocityUponCollision(gamePiece);
                     updateGamePieceStatus(gamePiece, i, j);
                     scoreDisplay.increaseScore();
                     highScoreDisplay.updateHighScore(scoreDisplay.getScore());
@@ -183,25 +167,47 @@ public class Game {
             gameLauncher.removeFromRoot(gamePiece);
             if (gamePiece instanceof Block) {
                 generatePowerUp((Block)gamePiece, i, j);
-                System.out.println(gamePiece);
             }
         }
     }
 
     private void generatePowerUp(Block deletedBlock, int i, int j) {
         if (Math.random() <= GameStatus.POWER_UP_PROBABILITY) {
-            Random random = new Random();
-            try {
-                //get random powerup class
-                Class<? extends PowerUp> powerUpClass = GameStatus.POWERUPS.get(random.nextInt(GameStatus.POWERUPS.size()));
-                Constructor<? extends PowerUp> powerUpConstructor = powerUpClass.getConstructor(double.class, double.class, double.class, double.class);
-                PowerUp powerUp = powerUpConstructor.newInstance(deletedBlock.getX() + deletedBlock.getWidth()/4, deletedBlock.getY(),
-                        deletedBlock.getWidth()/2, deletedBlock.getHeight()); // half size of block and move it to center
+            PowerUp powerUp = makePowerUp(deletedBlock.getX() + deletedBlock.getWidth()/4, deletedBlock.getY(),
+                    deletedBlock.getWidth()/2, deletedBlock.getHeight());
+            if (powerUp != null) {
                 powerUp.getAttributesFromBlock(deletedBlock);
                 gameLauncher.addToRoot(powerUp);
                 gridOfGamePieces[i][j] = powerUp;
-            } catch(NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                e.printStackTrace();
+            }
+        }
+    }
+
+    private PowerUp makePowerUp(double x, double y, double width, double height) {
+        Random random = new Random();
+        try {
+            Class<? extends PowerUp> powerUpClass = GameStatus.POWERUPS.get(random.nextInt(GameStatus.POWERUPS.size()));
+            Constructor<? extends PowerUp> powerUpConstructor =
+                    powerUpClass.getConstructor(double.class, double.class, double.class, double.class);
+            return powerUpConstructor.newInstance(x, y, width, height); // half size of block and move it to center
+        } catch(NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private void makePowerUpFromFirstBlock() {
+        Block replaceBlock = getFirstBlock();
+        if (replaceBlock != null) {
+            int row = replaceBlock.getRowPosition();
+            int col = replaceBlock.getColPosition();
+            PowerUp powerUp = makePowerUp(replaceBlock.getX() + replaceBlock.getWidth()/4, replaceBlock.getY(),
+                    replaceBlock.getWidth()/2, replaceBlock.getHeight());
+            if (powerUp != null) {
+                powerUp.getAttributesFromBlock(replaceBlock);
+                gameLauncher.addToRoot(powerUp);
+                gameLauncher.removeFromRoot(replaceBlock);
+                gridOfGamePieces[row][col] = powerUp;
             }
         }
     }
@@ -225,7 +231,7 @@ public class Game {
                     if (block.getLives() > 0 && (block.getLeft() <= 0 || block.getRight() >= GameStatus.WINDOWWIDTH)) {
                         changeXVelRow(block);
                         break;
-                    }else{
+                    } else  {
                         GamePiece columnBlock = gridOfGamePieces[j][i];
                         if (columnBlock.getLives() > 0 && (columnBlock.getTop() <= GameStatus.DISPLAYHEIGHT  ||
                                 columnBlock.getBottom() >= 400)) {
@@ -253,7 +259,6 @@ public class Game {
             GamePiece change = gridOfGamePiece[col];
             if (change instanceof Block){
                 change.updateYVelocityUponCollision();
-
             }
         }
     }
@@ -288,11 +293,11 @@ public class Game {
             gameMessage.setText("You Ran Out Of Lives! You lost!");
             gameMessage.setId("lossMessage");
             pause = true;
-            gameLauncher.addToRoot(gameMessage);
         }
+        gameLauncher.addToRoot(gameMessage);
     }
 
-    private boolean hasWon(){
+    private boolean hasWon() {
         for (GamePiece[] rowOfGamePieces : gridOfGamePieces){
             for (GamePiece gamePiece : rowOfGamePieces){
                 if (gamePiece.getLives() != 0){
@@ -303,7 +308,7 @@ public class Game {
         return true;
     }
 
-    private boolean hasLost(){
+    private boolean hasLost() {
         return livesDisplay.getLives() == 0;
     }
 
@@ -330,7 +335,7 @@ public class Game {
             case R -> resetLevel();
             case SPACE -> setPause();
             case L -> addLife();
-//            case P -> ;
+            case P -> makePowerUpFromFirstBlock();
             case C -> clearLevel();
             case D -> clearFirstBlock();
             case S -> highScoreDisplay.clearHighScore();
@@ -354,7 +359,7 @@ public class Game {
     }
 
     private void clearFirstBlock(){
-        GamePiece blockToRemove = getFirstBlock();
+        Block blockToRemove = getFirstBlock();
         blockToRemove.setLives(0);
         gameLauncher.removeFromRoot(blockToRemove);
     }
@@ -376,11 +381,11 @@ public class Game {
         levelDisplay.setLevel(level);
     }
 
-    private GamePiece getFirstBlock(){
+    private Block getFirstBlock(){
         for (int i = gridOfGamePieces.length - 1; i >= 0; i--){
             for (int j = 0; j <gridOfGamePieces[0].length; j++){
-                if (gridOfGamePieces[i][j].getLives() > 0){
-                    return gridOfGamePieces[i][j];
+                if (gridOfGamePieces[i][j].getLives() > 0 && gridOfGamePieces[i][j] instanceof Block){
+                    return (Block)gridOfGamePieces[i][j];
                 }
             }
         }
@@ -401,17 +406,18 @@ public class Game {
     private void loadNextLevel(){
         BlockConfigurationReader blockReader = new BlockConfigurationReader();
         int maxLevel = blockReader.getFileCount();
-        if (level >= maxLevel){
+        if (level >= maxLevel) {
             Text gameMessage = new Text(150, 300, "WOWOWOW!!! YOU BEAT THE WHOLE GAME");
+            gameMessage.setId("winGameMessage");
             gameLauncher.addToRoot(gameMessage);
             resetBallPaddle();
-            return;
+        } else {
+            clearLevel();
+            level += 1;
+            gridOfGamePieces = gameLauncher.setUpLevel(level);
+            scoreDisplay.setCheckPointScore();
+            levelDisplay.incrementLevel();
+            resetBallPaddle();
         }
-        clearLevel();
-        level += 1;
-        gridOfGamePieces = gameLauncher.setUpLevel(level);
-        scoreDisplay.setCheckPointScore();
-        levelDisplay.incrementLevel();
-        resetBallPaddle();
     }
 }

@@ -1,7 +1,7 @@
 package breakout;
 
 
-abstract class PowerUp extends GamePiece {
+public abstract class PowerUp extends GamePiece {
 
     private int timer;
     private boolean powerUpActive;

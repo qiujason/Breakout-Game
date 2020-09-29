@@ -7,7 +7,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -15,11 +14,15 @@ import javafx.util.Duration;
 public class GameLauncher extends Application {
     private Group root;
     private Game game;
+    private ScoreDisplay scoreDisplay;
+    private LivesDisplay livesDisplay;
+    private LevelDisplay levelDisplay;
+    private HighScoreDisplay highScoreDisplay;
 
     @Override
     public void start(Stage primaryStage) {
         // attach scene to the stage and display it
-        Scene myScene = setupScene(GameStatus.WINDOWWIDTH, GameStatus.WINDOWHEIGHT, GameStatus.BACKGROUND);
+        Scene myScene = setupScene();
         primaryStage.setScene(myScene);
         primaryStage.setTitle(GameStatus.TITLE);
         primaryStage.setResizable(false);
@@ -32,23 +35,23 @@ public class GameLauncher extends Application {
         animation.play();
     }
 
-    private Scene setupScene(int width, int height, Paint background) {
+    protected Scene setupScene() {
         root = new Group();
-        Ball ball = new Ball(width / 2,
-                height - GameStatus.RADIUS - (int)GameStatus.PADDLEHEIGHT - 1, GameStatus.RADIUS, Color.web("#ff7f50"));
+        Ball ball = new Ball(GameStatus.WINDOWWIDTH / 2,
+                GameStatus.WINDOWHEIGHT - GameStatus.RADIUS - (int)GameStatus.PADDLEHEIGHT - 1, GameStatus.RADIUS, Color.web("#ff7f50"));
         root.getChildren().add(ball);
-        Paddle paddle = new Paddle(width/2.0 - GameStatus.PADDLEWIDTH/2, height - GameStatus.PADDLEHEIGHT,
+        Paddle paddle = new Paddle(GameStatus.WINDOWWIDTH /2.0 - GameStatus.PADDLEWIDTH/2, GameStatus.WINDOWHEIGHT - GameStatus.PADDLEHEIGHT,
                 GameStatus.PADDLEWIDTH, GameStatus.PADDLEHEIGHT, Color.web("#6897bb")); //TODO: Clean this
         root.getChildren().add(paddle);
         setUpDisplayBar();
-        LivesDisplay livesDisplay = setUpLivesDisplay();
-        ScoreDisplay scoreDisplay = setUpScoreDisplay();
-        LevelDisplay levelDisplay = setUpLevelDisplay();
-        HighScoreDisplay highScoreDisplay = setUpHighScoreDisplay();
+        setUpLivesDisplay();
+        setUpScoreDisplay();
+        setUpLevelDisplay();
+        setUpHighScoreDisplay();
         GamePiece[][] gridOfGamePieces = setUpLevel(GameStatus.FIRST_LEVEL);
         game = new Game(this, livesDisplay, scoreDisplay,
                 levelDisplay, highScoreDisplay, ball, paddle, gridOfGamePieces);
-        Scene scene = new Scene(root, width, height, background);
+        Scene scene = new Scene(root, GameStatus.WINDOWWIDTH, GameStatus.WINDOWHEIGHT, GameStatus.BACKGROUND);
         scene.setOnKeyPressed(e -> game.handleKeyInput(e.getCode()));
         scene.setOnMouseClicked(e -> game.handleMouseInput(e.getX()));
         return scene;
@@ -66,30 +69,26 @@ public class GameLauncher extends Application {
         root.getChildren().add(display);
     }
 
-    private LivesDisplay setUpLivesDisplay() {
-        LivesDisplay livesDisplay = new LivesDisplay();
+    private void setUpLivesDisplay() {
+        livesDisplay = new LivesDisplay();
         root.getChildren().add(livesDisplay);
-        return livesDisplay;
     }
 
-    private ScoreDisplay setUpScoreDisplay() {
-        ScoreDisplay scoreDisplay = new ScoreDisplay();
+    private void setUpScoreDisplay() {
+        scoreDisplay = new ScoreDisplay();
         root.getChildren().add(scoreDisplay);
-        return scoreDisplay;
     }
 
-    private LevelDisplay setUpLevelDisplay() {
-        LevelDisplay levelDisplay = new LevelDisplay();
+    private void setUpLevelDisplay() {
+        levelDisplay = new LevelDisplay();
         root.getChildren().add(levelDisplay);
-        return levelDisplay;
     }
 
-    public HighScoreDisplay setUpHighScoreDisplay(){
+    public void setUpHighScoreDisplay(){
         HighScoreReader highScoreReader = new HighScoreReader();
         int highScore = highScoreReader.readInHighScore();
-        HighScoreDisplay highScoreDisplay = new HighScoreDisplay(highScore);
+        highScoreDisplay = new HighScoreDisplay(highScore);
         root.getChildren().add(highScoreDisplay);
-        return highScoreDisplay;
     }
 
     public void addToRoot(Node element) {
@@ -100,7 +99,34 @@ public class GameLauncher extends Application {
         root.getChildren().remove(element);
     }
 
+    public void removeFromRoot(String id) {
+        root.getChildren().remove(root.lookup(id));
+    }
+
+    // following methods for testing purposes
+
+    public Game getGame() {
+        return game;
+    }
+
+    public ScoreDisplay getScoreDisplay() {
+        return scoreDisplay;
+    }
+
+    public LivesDisplay getLivesDisplay() {
+        return livesDisplay;
+    }
+
+    public LevelDisplay getLevelDisplay() {
+        return levelDisplay;
+    }
+
+    public HighScoreDisplay getHighScoreDisplay() {
+        return highScoreDisplay;
+    }
+
     public static void main(String[] args) {
         launch(args);
     }
+
 }

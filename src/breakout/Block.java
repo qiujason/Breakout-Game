@@ -10,7 +10,7 @@ public class Block extends GamePiece {
     private final Paint TWO_HIT_BLOCK_COLOR = Color.web("#ffb3ba");
     private final Paint THREE_HIT_BLOCK_COLOR = Color.web("#baffc9");
 
-    public Block(double x, double y, double width, double height, int lives, String movement) {
+    public Block(double x, double y, double width, double height, int lives) {
         super(x, y, width, height, lives);
         setFill(determineColor(lives));
     }
