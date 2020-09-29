@@ -39,6 +39,7 @@ public class GameLauncher extends Application {
         root = new Group();
         Ball ball = new Ball(GameStatus.WINDOWWIDTH / 2,
                 GameStatus.WINDOWHEIGHT - GameStatus.RADIUS - (int)GameStatus.PADDLEHEIGHT - 1, GameStatus.RADIUS, Color.web("#ff7f50"));
+
         root.getChildren().add(ball);
         Paddle paddle = new Paddle(GameStatus.WINDOWWIDTH /2.0 - GameStatus.PADDLEWIDTH/2, GameStatus.WINDOWHEIGHT - GameStatus.PADDLEHEIGHT,
                 GameStatus.PADDLEWIDTH, GameStatus.PADDLEHEIGHT, Color.web("#6897bb")); //TODO: Clean this

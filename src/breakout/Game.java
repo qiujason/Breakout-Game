@@ -17,6 +17,7 @@ public class Game {
     private final LevelDisplay levelDisplay;
     private final HighScoreDisplay highScoreDisplay;
     private final List<PowerUp> activePowerUps; // contains power ups that are falling or have been activated
+    private final List<PowerUp> fallingPowerUps; // contains power ups that are falling
     private GamePiece[][] gridOfGamePieces;
     private int level;
     private boolean pause;
@@ -33,6 +34,7 @@ public class Game {
         this.paddle = paddle;
         this.gridOfGamePieces = gridOfGamePieces;
         this.level = GameStatus.FIRST_LEVEL;
+        this.fallingPowerUps = new ArrayList<>();
         this.activePowerUps = new ArrayList<>();
         this.pause = false;
     }
@@ -107,6 +109,7 @@ public class Game {
         checkBorderBallCollision();
         checkBorderBlockCollision();
         updateBlockPositions(elapsedTime);
+        updatePowerUps(elapsedTime);
         ball.updatePosition(elapsedTime);
     }
 
@@ -122,51 +125,44 @@ public class Game {
         if (isIntersectingWithBall(paddle)) {
             ball.updateVelocityUponCollision(paddle);
         }
-        PowerUp activePowerUp = getActivePowerUpFromCollision();
-        if (activePowerUp != null) {
-            activePowerUp.updateGameStatus(this);
-            activePowerUp.setActive(true);
-            updateGamePieceStatus(activePowerUp, -1, -1);
-        }
-    }
-
-    private PowerUp getActivePowerUpFromCollision() {
-        for (PowerUp activePowerUp : activePowerUps) {
-            if (activePowerUp.getBoundsInParent().intersects(paddle.getBoundsInParent())) {
-                return activePowerUp;
+        for (PowerUp fallingPowerUp : fallingPowerUps) {
+            if (fallingPowerUp != null && isIntersectingWithPaddle(fallingPowerUp)){
+                fallingPowerUp.updateGameStatus(this);
+                updateGamePieceStatus(fallingPowerUp);
             }
         }
-        return null;
     }
 
     private void checkBallGamePieceCollision() {
-        for (int i = 0; i < gridOfGamePieces.length; i++) {
-            for (int j = 0; j < gridOfGamePieces[i].length; j++) {
-                GamePiece gamePiece = gridOfGamePieces[i][j];
-                if (gamePiece instanceof PowerUp && activePowerUps.contains(gamePiece)) {
+        for (GamePiece[] gridOfGamePiece : gridOfGamePieces) {
+            for (GamePiece gamePiece : gridOfGamePiece) {
+                if (gamePiece instanceof PowerUp && fallingPowerUps.contains(gamePiece)) {
                     continue; // avoid collision of ball with falling power up
                 }
                 if (gamePiece.getLives() > 0 && isIntersectingWithBall(gamePiece)) {
                     ball.updateVelocityUponCollision(gamePiece);
-                    updateGamePieceStatus(gamePiece, i, j);
                     scoreDisplay.increaseScore();
                     highScoreDisplay.updateHighScore(scoreDisplay.getScore());
+                    updateGamePieceStatus(gamePiece);
                 }
+
             }
         }
     }
 
-    private void updateGamePieceStatus(GamePiece gamePiece, int i, int j) {
+    private void updateGamePieceStatus(GamePiece gamePiece) {
         gamePiece.updateStatus();
-        if (gamePiece instanceof PowerUp && !((PowerUp)gamePiece).isActive()) { // power up is not active or falling
-            PowerUp powerUp = (PowerUp)gamePiece;
-            powerUp.beginDropDown();
-            activePowerUps.add(powerUp); // put power up in to begin falling but has not been activated
+        if (gamePiece instanceof PowerUp && !((PowerUp)gamePiece).isFalling()) { // power up is not active or falling
+           gridOfGamePieces[gamePiece.getRowPosition()][gamePiece.getColPosition()] =
+                    new Block(0,0,1,1,0);
+           PowerUp powerUp = (PowerUp)gamePiece;
+           powerUp.beginFalling();
+           fallingPowerUps.add(powerUp); // put power up in to begin falling
         }
-        if (gamePiece.getLives() == 0) {
+        if (gamePiece.getLives() <= 0) {
             gameLauncher.removeFromRoot(gamePiece);
             if (gamePiece instanceof Block) {
-                generatePowerUp((Block)gamePiece, i, j);
+                generatePowerUp((Block)gamePiece, gamePiece.getRowPosition(), gamePiece.getColPosition());
             }
         }
     }
@@ -225,21 +221,23 @@ public class Game {
     }
 
     private void checkBorderBlockCollision(){
-        for (int i = 0; i < gridOfGamePieces.length; i++){
-            for (int j = 0; j < gridOfGamePieces[0].length; j++){
-                GamePiece block = gridOfGamePieces[i][j];
-                    if (block.getLives() > 0 && (block.getLeft() <= 0 || block.getRight() >= GameStatus.WINDOWWIDTH)) {
-                        changeXVelRow(block);
-                        break;
-                    } else  {
-                        GamePiece columnBlock = gridOfGamePieces[j][i];
-                        if (columnBlock.getLives() > 0 && (columnBlock.getTop() <= GameStatus.DISPLAYHEIGHT  ||
-                                columnBlock.getBottom() >= 400)) {
-                            changeYVelCol(columnBlock);
-                            break;
-                        }
-                    }
-
+        for (GamePiece[] gridOfGamePiece : gridOfGamePieces) {
+            for (int j = 0; j < gridOfGamePieces[0].length; j++) {
+                GamePiece block = gridOfGamePiece[j];
+                if (block.getLives() > 0 && (block.getLeft() <= 0 || block.getRight() >= GameStatus.WINDOWWIDTH)) {
+                    changeXVelRow(block);
+                    break;
+                }
+            }
+        }
+        for (int i = 0; i < gridOfGamePieces[0].length; i++) {
+            for (GamePiece[] gridOfGamePiece : gridOfGamePieces) {
+                GamePiece columnBlock = gridOfGamePiece[i];
+                if (columnBlock.getLives() > 0 && (columnBlock.getTop() <= GameStatus.DISPLAYHEIGHT ||
+                        columnBlock.getBottom() >= 300)) {
+                    changeYVelCol(columnBlock);
+                    break;
+                }
             }
         }
 
@@ -257,9 +255,11 @@ public class Game {
         int col = block.getColPosition();
         for (GamePiece[] gridOfGamePiece : gridOfGamePieces) {
             GamePiece change = gridOfGamePiece[col];
-            if (change instanceof Block){
-                change.updateYVelocityUponCollision();
+            if (change instanceof PowerUp && ((PowerUp) change).isFalling()){
+                return;
             }
+            change.updateYVelocityUponCollision();
+
         }
     }
 
@@ -267,7 +267,16 @@ public class Game {
         return gamePiece.getBoundsInParent().intersects(ball.getBoundsInParent());
     }
 
-    private void updatePowerUps(double elapsedTime) {
+    private boolean isIntersectingWithPaddle(Rectangle gamePiece){
+        return gamePiece.getBoundsInParent().intersects(paddle.getBoundsInParent());
+    }
+
+    private void updatePowerUps(double elapsedTime){
+        updateActivePowerUps();
+        updateFallingPowerUps(elapsedTime);
+    }
+
+    private void updateActivePowerUps() {
         Iterator<PowerUp> iterator = activePowerUps.iterator();
         while (iterator.hasNext()) { // iterator has to be used instead in order to avoid Concurrent Modification errors
             PowerUp activePowerUp = iterator.next();
@@ -277,9 +286,13 @@ public class Game {
                     activePowerUp.resetGameStatus(this);
                     iterator.remove(); // remove power up from active power up collection
                 }
-            } else { // not active but falling
-                activePowerUp.dropDown(elapsedTime);
             }
+        }
+    }
+
+    private void updateFallingPowerUps(double elapsedTime){
+        for (PowerUp fallingPowerUp : fallingPowerUps) { // iterator has to be used instead in order to avoid Concurrent Modification errors
+            fallingPowerUp.fall(elapsedTime);
         }
     }
 
@@ -352,9 +365,11 @@ public class Game {
 
     private void clearFirstRowBlock(){
         GamePiece[] rowToRemove = getFirstRowBlock();
-        for(GamePiece block : rowToRemove){
-            block.setLives(0);
-            gameLauncher.removeFromRoot(block);
+        if (rowToRemove != null) {
+            for (GamePiece block : rowToRemove) {
+                block.setLives(0);
+                gameLauncher.removeFromRoot(block);
+            }
         }
     }
 
@@ -365,10 +380,10 @@ public class Game {
     }
 
     private void allBlocksLoseLife(){
-        for (int i = 0; i < gridOfGamePieces.length; i++){
-            for (int j = 0; j < gridOfGamePieces[0].length; j++){
-                if (gridOfGamePieces[i][j].getLives() > 0){
-                    updateGamePieceStatus(gridOfGamePieces[i][j], i, j);
+        for (GamePiece[] gridOfGamePiece : gridOfGamePieces) {
+            for (int j = 0; j < gridOfGamePieces[0].length; j++) {
+                if (gridOfGamePiece[j].getLives() > 0) {
+                    updateGamePieceStatus(gridOfGamePiece[j]);
                 }
             }
         }
@@ -376,6 +391,7 @@ public class Game {
 
     private void jumpToLevel(int level) {
         clearLevel();
+        resetBallPaddle();
         this.level = level;
         gridOfGamePieces = gameLauncher.setUpLevel(level);
         levelDisplay.setLevel(level);

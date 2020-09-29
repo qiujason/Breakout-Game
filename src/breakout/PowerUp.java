@@ -4,6 +4,7 @@ package breakout;
 public abstract class PowerUp extends GamePiece {
 
     private int timer;
+    private boolean falling;
     private boolean powerUpActive;
 
     public PowerUp(double x, double y, double width, double height) {
@@ -12,21 +13,27 @@ public abstract class PowerUp extends GamePiece {
         powerUpActive = false;
     }
 
-    public void beginDropDown() {
+    public void beginFalling() {
         setYVelocity(50);
+        falling = true;
     }
 
-    public void dropDown(double elapsedTime) {
+    public void fall(double elapsedTime) {
         updatePosition(elapsedTime);
     }
 
-    public void setActive(boolean isActive) {
-        powerUpActive = isActive;
+    public void setActive() {
+        powerUpActive = true;
     }
 
     public boolean isActive() {
         return powerUpActive;
     }
+
+    public boolean isFalling() {
+        return falling;
+    }
+
 
     public void decrementTimer() {
         timer -= 1;

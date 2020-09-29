@@ -10,7 +10,7 @@ public class AddLifePowerUp extends PowerUp {
     public void updateGameStatus(Game game) {
         if (!super.isActive()) {
             game.addLife();
-            super.setActive(true);
+            super.setActive();
         }
     }
 

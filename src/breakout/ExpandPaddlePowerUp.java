@@ -10,7 +10,7 @@ public class ExpandPaddlePowerUp extends PowerUp {
     public void updateGameStatus(Game game) {
         if (!super.isActive()) {
             game.scalePaddleSize(1.5);
-            super.setActive(true);
+            super.setActive();
         }
     }
 

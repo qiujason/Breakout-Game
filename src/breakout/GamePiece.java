@@ -51,7 +51,7 @@ public abstract class GamePiece extends Rectangle {
     }
 
     public double getBottom() {
-        return getY() - getHeight();
+        return getY() + getHeight();
     }
 
     public void updateXVelocityUponCollision() {
@@ -107,8 +107,11 @@ public abstract class GamePiece extends Rectangle {
     }
 
     public String toString(){
-        return Double.toString(this.getXVelocity());
+        if(this instanceof PowerUp){
+            return "PowerUp: " + this.getLives() + " " + ((PowerUp) this).isActive() + " " + + this.getYVelocity();
+        }else return "Block "  + this.getLives() + " " + this.getYVelocity();
     }
 
     abstract void updateStatus();
+
 }
