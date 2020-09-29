@@ -22,12 +22,4 @@ public class Paddle extends Rectangle {
         setX(startX);
         setY(startY);
     }
-
-//    public void changeWidth(double newWidth) {
-//        setWidth(newWidth);
-//    }
-//
-//    public void changeHeight(double newHeight) {
-//        setHeight(newWidth);
-//    }
 }

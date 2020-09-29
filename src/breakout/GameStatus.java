@@ -33,6 +33,7 @@ public final class GameStatus {
                 AddLifePowerUp.class,
                 SlowDownPowerUp.class)
     );
+    public static final int POWER_UP_TIMER = 10 * FRAMES_PER_SECOND;
     public static final int START_SCORE = 0;
     public static final int STARTING_LIVES = 3;
 }

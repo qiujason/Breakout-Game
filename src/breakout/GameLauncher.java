@@ -47,7 +47,7 @@ public class GameLauncher extends Application {
         HighScoreDisplay highScoreDisplay = setUpHighScoreDisplay();
         GamePiece[][] gridOfGamePieces = setUpLevel(GameStatus.FIRST_LEVEL);
         game = new Game(this, livesDisplay, scoreDisplay,
-                levelDisplay, ball, paddle, gridOfGamePieces, highScoreDisplay);
+                levelDisplay, highScoreDisplay, ball, paddle, gridOfGamePieces);
         Scene scene = new Scene(root, width, height, background);
         scene.setOnKeyPressed(e -> game.handleKeyInput(e.getCode()));
         scene.setOnMouseClicked(e -> game.handleMouseInput(e.getX()));

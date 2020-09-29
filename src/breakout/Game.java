@@ -6,6 +6,9 @@ import javafx.scene.text.Text;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 
@@ -15,30 +18,36 @@ public class Game {
     private final Paddle paddle;
     private final ScoreDisplay scoreDisplay;
     private final LivesDisplay livesDisplay;
-    private GamePiece[][] gridOfGamePieces;
     private final LevelDisplay levelDisplay;
     private final HighScoreDisplay highScoreDisplay;
-    private boolean pause = false;
+    private GamePiece[][] gridOfGamePieces;
     private int level;
+    private List<PowerUp> activePowerUps; // contains power ups that are falling or have been activated
+    private boolean pause;
+    private boolean powerUpPause;
 
     public Game(GameLauncher gameLauncher, LivesDisplay livesDisplay, ScoreDisplay scoreDisplay,
-                LevelDisplay levelDisplay, Ball ball, Paddle paddle, GamePiece[][] gridOfGamePieces,
-                HighScoreDisplay highScoreDisplay) {
+                LevelDisplay levelDisplay, HighScoreDisplay highScoreDisplay, Ball ball,
+                Paddle paddle, GamePiece[][] gridOfGamePieces) {
         this.gameLauncher = gameLauncher;
         this.livesDisplay = livesDisplay;
         this.scoreDisplay = scoreDisplay;
         this.levelDisplay = levelDisplay;
+        this.highScoreDisplay = highScoreDisplay;
         this.ball = ball;
         this.paddle = paddle;
         this.gridOfGamePieces = gridOfGamePieces;
         this.level = GameStatus.FIRST_LEVEL;
-        this.highScoreDisplay = highScoreDisplay;
+        this.activePowerUps = new ArrayList<>();
+        this.pause = false;
+        this.powerUpPause = true;
     }
 
     public void handleMouseInput(double x) {
         if (ball.getXVelocity() == 0 && ball.getYVelocity() == 0) {
             ball.setXVelocity(x - GameStatus.WINDOWWIDTH/2.0);
             ball.setYVelocity(-150);
+            powerUpPause = false;
         }
     }
 
@@ -53,6 +62,9 @@ public class Game {
     public void step(double elapsedTime) {
         if (!pause) {
             updateShapes(elapsedTime);
+            if (!powerUpPause) {
+                updatePowerUps(elapsedTime);
+            }
         }
         checkGameStatus();
     }
@@ -67,6 +79,7 @@ public class Game {
     public void resetBallPaddle(){
         ball.reset();
         paddle.reset();
+        powerUpPause = true;
     }
 
     public void clearLevel() {
@@ -100,7 +113,7 @@ public class Game {
     private void updateShapes(double elapsedTime) {
         checkPaddleCollision();
         checkBorderCollision();
-        checkGamePieceCollision();
+        checkBallGamePieceCollision();
         ball.updatePosition(elapsedTime);
     }
 
@@ -108,14 +121,43 @@ public class Game {
         if (isIntersectingWithBall(paddle)) {
             ball.updateVelocityUponCollision(paddle);
         }
+        PowerUp activePowerUp = getActivePowerUpFromCollision();
+        if (activePowerUp != null) {
+            activePowerUp.updateGameStatus(this);
+            activePowerUp.setActive(true);
+            updateGamePieceStatus(activePowerUp, -1, -1);
+        }
     }
 
-    private void checkGamePieceCollision() {
+    private PowerUp getActivePowerUpFromCollision() {
+        for (PowerUp activePowerUp : activePowerUps) {
+            if (activePowerUp.getBoundsInParent().intersects(paddle.getBoundsInParent())) {
+                return activePowerUp;
+            }
+        }
+        return null;
+    }
+
+    private void checkBorderCollision() {
+        if (ball.getLeft() <= 0 || ball.getRight() >= GameStatus.WINDOWWIDTH) {
+            ball.updateXVelocityUponBorderCollision();
+        } else if (ball.getTop() <= GameStatus.DISPLAYHEIGHT) {
+            ball.updateYVelocityUponBorderCollision();
+        } else if (ball.getTop() > GameStatus.WINDOWHEIGHT) { // goes below the screen
+            resetBallPaddle();
+            livesDisplay.subtractLife();
+            scoreDisplay.resetBonus();
+        }
+    }
+
+    private void checkBallGamePieceCollision() {
         for (int i = 0; i < gridOfGamePieces.length; i++) {
             for (int j = 0; j < gridOfGamePieces[i].length; j++) {
                 GamePiece gamePiece = gridOfGamePieces[i][j];
-                if (gamePiece.getLives() > 0 && gamePiece instanceof Rectangle &&
-                        isIntersectingWithBall((Rectangle) gamePiece)) {
+                if (gamePiece instanceof PowerUp && activePowerUps.contains(gamePiece)) {
+                    continue; // avoid collision of ball with falling power up
+                }
+                if (gamePiece.getLives() > 0 && gamePiece instanceof Rectangle && isIntersectingWithBall((Rectangle) gamePiece)) {
                     ball.updateVelocityUponCollision((Rectangle) gamePiece);
                     updateGamePieceStatus(gamePiece, i, j);
                     scoreDisplay.increaseScore();
@@ -127,11 +169,10 @@ public class Game {
 
     private void updateGamePieceStatus(GamePiece gamePiece, int i, int j) {
         gamePiece.updateStatus();
-        if (gamePiece instanceof PowerUp) {
-            ((PowerUp)gamePiece).updateGameStatus(this);
+        if (gamePiece instanceof PowerUp && !((PowerUp)gamePiece).isActive()) { // power up is not active or falling
+            PowerUp powerUp = (PowerUp)gamePiece;
+            activePowerUps.add(powerUp); // put power up in to begin falling but has not been activated
         }
-//        ExpandPaddlePowerUp jfkd = new ExpandPaddlePowerUp(1, 2);
-//        System.out.println(jfkd.getClass() == GameStatus.GAME_PIECES[0]);
         if (gamePiece.getLives() == 0 && gamePiece instanceof Node) {
             gameLauncher.removeFromRoot((Node) gamePiece);
             if (gamePiece instanceof Block) {
@@ -146,7 +187,8 @@ public class Game {
             try {
                 Class<? extends PowerUp> powerUpClass = GameStatus.POWERUPS.get(random.nextInt(GameStatus.POWERUPS.size()));
                 Constructor<? extends PowerUp> powerUpConstructor = powerUpClass.getConstructor(double.class, double.class, double.class, double.class);
-                PowerUp powerUp = powerUpConstructor.newInstance(deletedBlock.getX(), deletedBlock.getY(), deletedBlock.getWidth(), deletedBlock.getHeight());
+                PowerUp powerUp = powerUpConstructor.newInstance(deletedBlock.getX() + deletedBlock.getWidth()/4, deletedBlock.getY(),
+                        deletedBlock.getWidth()/2, deletedBlock.getHeight()); // half size of block and move it to center
                 gameLauncher.addToRoot(powerUp);
                 gridOfGamePieces[i][j] = powerUp;
             } catch(NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
@@ -154,20 +196,25 @@ public class Game {
             }
         }
     }
-    private void checkBorderCollision() {
-        if (ball.getLeft() <= 0 || ball.getRight() >= GameStatus.WINDOWWIDTH) {
-            ball.updateXVelocityUponBorderCollision();
-        } else if (ball.getTop() <= GameStatus.DISPLAYHEIGHT) {
-            ball.updateYVelocityUponBorderCollision();
-        } else if (ball.getTop() > GameStatus.WINDOWHEIGHT) { // goes below the screen
-            resetBallPaddle();
-            livesDisplay.subtractLife();
-            scoreDisplay.resetBonus();
-        }
-    }
 
     private boolean isIntersectingWithBall(Rectangle gamePiece) {
         return gamePiece.getBoundsInParent().intersects(ball.getBoundsInParent());
+    }
+
+    private void updatePowerUps(double elapsedTime) {
+        Iterator<PowerUp> iterator = activePowerUps.iterator();
+        while (iterator.hasNext()) { // iterator has to be used instead in order to avoid Concurrent Modification errors
+            PowerUp activePowerUp = iterator.next();
+            if (activePowerUp.isActive()) {
+                activePowerUp.decrementTimer();
+                if (activePowerUp.hasTimerEnded()) {
+                    activePowerUp.resetGameStatus(this);
+                    iterator.remove(); // remove power up from active power up collection
+                }
+            } else { // not active but falling
+                activePowerUp.dropDown(elapsedTime);
+            }
+        }
     }
 
     private void checkGameStatus() {

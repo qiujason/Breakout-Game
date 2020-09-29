@@ -3,11 +3,17 @@ package breakout;
 public class AddLifePowerUp extends PowerUp {
 
     public AddLifePowerUp(double x, double y, double width, double height) {
-        super(x, y, width, height, 1);
+        super(x, y, width, height, 2);
     }
 
     @Override
     public void updateGameStatus(Game game) {
-        game.addLife();
+        if (!super.isActive()) {
+            game.addLife();
+            super.setActive(true);
+        }
     }
+
+    @Override
+    public void resetGameStatus(Game game) {} // not timer dependent
 }
