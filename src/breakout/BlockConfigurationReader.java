@@ -23,7 +23,7 @@ public class BlockConfigurationReader {
         row++;
       }
     } catch (Exception e) {
-      System.out.println("Invalid Block Configuration File!");
+      throw new RuntimeException("Invalid Block Configuration File!");
     }
   }
 
