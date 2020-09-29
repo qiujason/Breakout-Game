@@ -62,26 +62,10 @@ abstract class GamePiece extends Rectangle {
         reverseYVelocity();
     }
 
-    private void reverseXVelocity(){
-        xVelocity *= -1;
-    }
-
-    private void reverseYVelocity(){
-        yVelocity *= -1;
-    }
-
-    private void setXVelocity(double xVelocity){
-        this.xVelocity = xVelocity;
-    }
-
-    private void setYVelocity(double yVelocity){
-        this.yVelocity = yVelocity;
-    }
-
-    public void setSidewaysMovement(int row){
-        if (row % 2 == 1){
+    public void setSidewaysMovement(int row) {
+        if (row % 2 == 1) {
             setXVelocity(-50);
-        }else{
+        } else {
             setXVelocity(50);
         }
     }
@@ -96,6 +80,22 @@ abstract class GamePiece extends Rectangle {
 
     public int getColPosition(){
         return Integer.parseInt(this.getId().substring(6,7));
+    }
+
+    public void setXVelocity(double xVelocity){
+        this.xVelocity = xVelocity;
+    }
+
+    public void setYVelocity(double yVelocity){
+        this.yVelocity = yVelocity;
+    }
+
+    private void reverseXVelocity(){
+        xVelocity *= -1;
+    }
+
+    private void reverseYVelocity(){
+        yVelocity *= -1;
     }
 
     abstract void updateStatus();

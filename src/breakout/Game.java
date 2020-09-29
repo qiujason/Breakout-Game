@@ -118,9 +118,9 @@ public class Game {
     }
 
     private void updateBlockPositions(double elapsedTime){
-        for (GamePiece[] gridOfGamePiece : gridOfGamePieces) {
-            for (int j = 0; j < gridOfGamePieces[0].length; j++) {
-                gridOfGamePiece[j].updatePosition(elapsedTime);
+        for (GamePiece[] rowOfGamePieces : gridOfGamePieces) {
+            for (GamePiece gamePiece : rowOfGamePieces) {
+                gamePiece.updatePosition(elapsedTime);
             }
         }
     }
@@ -179,10 +179,11 @@ public class Game {
         gamePiece.updateStatus();
         if (gamePiece instanceof PowerUp && !((PowerUp)gamePiece).isActive()) { // power up is not active or falling
             PowerUp powerUp = (PowerUp)gamePiece;
+            powerUp.beginDropDown();
             activePowerUps.add(powerUp); // put power up in to begin falling but has not been activated
         }
         if (gamePiece.getLives() == 0) {
-            gameLauncher.removeFromRoot((Node) gamePiece);
+            gameLauncher.removeFromRoot(gamePiece);
             if (gamePiece instanceof Block) {
                 generatePowerUp((Block)gamePiece, i, j);
             }
@@ -254,8 +255,6 @@ public class Game {
             change.updateYVelocityUponCollision();
         }
     }
-
-
 
     private boolean isIntersectingWithBall(Rectangle gamePiece) {
         return gamePiece.getBoundsInParent().intersects(ball.getBoundsInParent());

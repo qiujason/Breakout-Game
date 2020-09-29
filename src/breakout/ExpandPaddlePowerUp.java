@@ -3,7 +3,7 @@ package breakout;
 public class ExpandPaddlePowerUp extends PowerUp {
 
     public ExpandPaddlePowerUp(double x, double y, double width, double height) {
-        super(x, y, width, height, 2);
+        super(x, y, width, height);
     }
 
     @Override
