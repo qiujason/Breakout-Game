@@ -6,10 +6,7 @@ import javafx.scene.text.Text;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 
 public class Game {
@@ -112,7 +109,7 @@ public class Game {
         checkPaddleCollision();
         checkBallGamePieceCollision();
         checkBorderBallCollision();
-        checkBorderBlockCollision(gridOfGamePieces);
+        checkBorderBlockCollision();
         updateBlockPositions(elapsedTime);
         ball.updatePosition(elapsedTime);
     }
@@ -186,6 +183,7 @@ public class Game {
             gameLauncher.removeFromRoot(gamePiece);
             if (gamePiece instanceof Block) {
                 generatePowerUp((Block)gamePiece, i, j);
+                System.out.println(gamePiece);
             }
         }
     }
@@ -199,7 +197,7 @@ public class Game {
                 Constructor<? extends PowerUp> powerUpConstructor = powerUpClass.getConstructor(double.class, double.class, double.class, double.class);
                 PowerUp powerUp = powerUpConstructor.newInstance(deletedBlock.getX() + deletedBlock.getWidth()/4, deletedBlock.getY(),
                         deletedBlock.getWidth()/2, deletedBlock.getHeight()); // half size of block and move it to center
-                powerUp.setId("block" + i + j);
+                powerUp.getAttributesFromBlock(deletedBlock);
                 gameLauncher.addToRoot(powerUp);
                 gridOfGamePieces[i][j] = powerUp;
             } catch(NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
@@ -207,6 +205,7 @@ public class Game {
             }
         }
     }
+
     private void checkBorderBallCollision() {
         if (ball.getLeft() <= 0 || ball.getRight() >= GameStatus.WINDOWWIDTH) {
             ball.updateXVelocityUponBorderCollision();
@@ -219,7 +218,7 @@ public class Game {
         }
     }
 
-    private void checkBorderBlockCollision(GamePiece[][] gridOfGamePieces){
+    private void checkBorderBlockCollision(){
         for (int i = 0; i < gridOfGamePieces.length; i++){
             for (int j = 0; j < gridOfGamePieces[0].length; j++){
                 GamePiece block = gridOfGamePieces[i][j];
@@ -252,7 +251,10 @@ public class Game {
         int col = block.getColPosition();
         for (GamePiece[] gridOfGamePiece : gridOfGamePieces) {
             GamePiece change = gridOfGamePiece[col];
-            change.updateYVelocityUponCollision();
+            if (change instanceof Block){
+                change.updateYVelocityUponCollision();
+
+            }
         }
     }
 

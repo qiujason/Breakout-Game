@@ -95,30 +95,18 @@ public class Ball extends Circle {
     }
 
     private boolean intersectBottom(Rectangle b){
-        System.out.println("A");
-        System.out.println(getBottom());
-        System.out.println(b.getY() + b.getHeight());
         return getBottom() >= b.getY() + b.getHeight();
     }
 
     private boolean intersectTop(Rectangle b){
-        System.out.println("B");
-        System.out.println(getTop());
-        System.out.println(b.getY());
         return getTop() <= b.getY();
     }
 
     private boolean intersectLeft(Rectangle b){
-        System.out.println("C");
-        System.out.println(getLeft());
-        System.out.println(b.getX());
         return getLeft() <= b.getX();
     }
 
     private boolean intersectRight(Rectangle b){
-        System.out.println("D");
-        System.out.println(getRight());
-        System.out.println(b.getX() + b.getWidth());
         return getRight() >= b.getX() + b.getWidth();
     }
 }

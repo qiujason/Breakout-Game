@@ -90,12 +90,24 @@ abstract class GamePiece extends Rectangle {
         this.yVelocity = yVelocity;
     }
 
+    public double getXVelocity(){
+        return xVelocity;
+    }
+
+    public double getYVelocity(){
+        return yVelocity;
+    }
+
     private void reverseXVelocity(){
         xVelocity *= -1;
     }
 
     private void reverseYVelocity(){
         yVelocity *= -1;
+    }
+
+    public String toString(){
+        return Double.toString(this.getXVelocity());
     }
 
     abstract void updateStatus();

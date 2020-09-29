@@ -40,6 +40,12 @@ abstract class PowerUp extends GamePiece {
         subtractLife();
     }
 
+    public void getAttributesFromBlock(Block block) {
+        setId(block.getId());
+        setXVelocity(block.getXVelocity());
+        setYVelocity(block.getYVelocity());
+    }
+
     abstract void updateGameStatus(Game game);
 
     abstract void resetGameStatus(Game game);

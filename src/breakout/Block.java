@@ -10,11 +10,8 @@ public class Block extends GamePiece {
     private final Paint TWO_HIT_BLOCK_COLOR = Color.web("#ffb3ba");
     private final Paint THREE_HIT_BLOCK_COLOR = Color.web("#baffc9");
 
-    private int lives;
-
     public Block(double x, double y, double width, double height, int lives, String movement) {
         super(x, y, width, height, lives);
-        this.lives = lives;
         setFill(determineColor(lives));
     }
 
@@ -29,6 +26,6 @@ public class Block extends GamePiece {
 
     public void updateStatus() {
         subtractLife();
-        setFill(determineColor(lives));
+        setFill(determineColor(getLives()));
     }
 }
