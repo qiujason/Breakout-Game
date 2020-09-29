@@ -7,77 +7,132 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class GameLauncher extends Application {
-    private Group root;
-    private Game game;
 
-    @Override
-    public void start(Stage primaryStage) {
-        // attach scene to the stage and display it
-        Scene myScene = setupScene(GameStatus.WINDOWWIDTH, GameStatus.WINDOWHEIGHT, GameStatus.BACKGROUND);
-        primaryStage.setScene(myScene);
-        primaryStage.setTitle(GameStatus.TITLE);
-        primaryStage.setResizable(false);
-        primaryStage.show();
-        // attach "game loop" to timeline to play it (basically just calling step() method repeatedly forever)
-        KeyFrame frame = new KeyFrame(Duration.seconds(GameStatus.SECOND_DELAY), e -> game.step(GameStatus.SECOND_DELAY));
-        Timeline animation = new Timeline();
-        animation.setCycleCount(Timeline.INDEFINITE);
-        animation.getKeyFrames().add(frame);
-        animation.play();
-    }
+  private Group root;
+  private Game game;
+  private ScoreDisplay scoreDisplay;
+  private LivesDisplay livesDisplay;
+  private LevelDisplay levelDisplay;
+  private HighScoreDisplay highScoreDisplay;
 
-    public Scene setupScene(int width, int height, Paint background) {
-        root = new Group();
+  @Override
+  public void start(Stage primaryStage) {
+    // attach scene to the stage and display it
+    Scene myScene = setupScene();
+    primaryStage.setScene(myScene);
+    primaryStage.setTitle(GameStatus.TITLE);
+    primaryStage.setResizable(false);
+    primaryStage.show();
+    // attach "game loop" to timeline to play it (basically just calling step() method repeatedly forever)
+    KeyFrame frame = new KeyFrame(Duration.seconds(GameStatus.SECOND_DELAY),
+        e -> game.step(GameStatus.SECOND_DELAY));
+    Timeline animation = new Timeline();
+    animation.setCycleCount(Timeline.INDEFINITE);
+    animation.getKeyFrames().add(frame);
+    animation.play();
+  }
 
-        Ball ball = new Ball(width / 2,
-                height - GameStatus.RADIUS - (int)GameStatus.PADDLEHEIGHT - 1, GameStatus.RADIUS, Color.ORANGE);
-        root.getChildren().add(ball);
+  protected Scene setupScene() {
+    root = new Group();
+    Ball ball = new Ball(GameStatus.WINDOWWIDTH / 2,
+        GameStatus.WINDOWHEIGHT - GameStatus.RADIUS - (int) GameStatus.PADDLEHEIGHT - 1,
+        GameStatus.RADIUS, Color.web("#ff7f50"));
 
-        Paddle paddle = new Paddle(width/2.0 - GameStatus.PADDLEWIDTH/2, height - GameStatus.PADDLEHEIGHT,
-                GameStatus.PADDLEWIDTH, GameStatus.PADDLEHEIGHT, GameStatus.PADDLEDELTA, Color.RED); //TODO: Clean this
-        root.getChildren().add(paddle);
+    root.getChildren().add(ball);
+    Paddle paddle = new Paddle(GameStatus.WINDOWWIDTH / 2.0 - GameStatus.PADDLEWIDTH / 2,
+        GameStatus.WINDOWHEIGHT - GameStatus.PADDLEHEIGHT,
+        GameStatus.PADDLEWIDTH, GameStatus.PADDLEHEIGHT, Color.web("#6897bb")); //TODO: Clean this
+    root.getChildren().add(paddle);
+    setUpDisplayBar();
+    setUpLivesDisplay();
+    setUpScoreDisplay();
+    setUpLevelDisplay();
+    setUpHighScoreDisplay();
+    GamePiece[][] gridOfGamePieces = setUpLevel(GameStatus.FIRST_LEVEL);
+    game = new Game(this, livesDisplay, scoreDisplay,
+        levelDisplay, highScoreDisplay, ball, paddle, gridOfGamePieces);
+    Scene scene = new Scene(root, GameStatus.WINDOWWIDTH, GameStatus.WINDOWHEIGHT,
+        GameStatus.BACKGROUND);
+    scene.setOnKeyPressed(e -> game.handleKeyInput(e.getCode()));
+    scene.setOnMouseClicked(e -> game.handleMouseInput(e.getX()));
+    return scene;
+  }
 
-        BlockConfigurationReader levelReader = new BlockConfigurationReader();
-        Block[][] gridOfBlocks = levelReader.loadLevel(root, 1);
 
-        game = new Game(this, ball, paddle, gridOfBlocks);
-        setUpDisplay();
+  public GamePiece[][] setUpLevel(int level) {
+    BlockConfigurationReader levelReader = new BlockConfigurationReader();
+    return levelReader.loadLevel(root, level);
+  }
 
-        Scene scene = new Scene(root, width, height, background);
-        scene.setOnKeyPressed(e -> game.getInputReader().handleKeyInput(e.getCode()));
-        scene.setOnMouseClicked(e -> game.getInputReader().handleMouseInput(e.getX(), e.getY()));
-        return scene;
-    }
+  private void setUpDisplayBar() {
+    Rectangle display = new Rectangle(GameStatus.WINDOWWIDTH, GameStatus.DISPLAYHEIGHT);
+    display.setFill(Color.LIGHTGREY);
+    root.getChildren().add(display);
+  }
 
-    private void setUpDisplay() {
-        Rectangle display = new Rectangle(GameStatus.WINDOWWIDTH, GameStatus.DISPLAYHEIGHT);
-        display.setFill(Color.LIGHTGREY);
-        root.getChildren().add(display);
+  private void setUpLivesDisplay() {
+    livesDisplay = new LivesDisplay();
+    root.getChildren().add(livesDisplay);
+  }
 
-        LivesDisplay livesDisplay = new LivesDisplay(GameStatus.LIVES, GameStatus.LIVES_DISPLAY_XPOS, GameStatus.LIVES_DISPLAY_YPOS);
-        root.getChildren().add(livesDisplay);
-        game.addLivesDisplay(livesDisplay);
+  private void setUpScoreDisplay() {
+    scoreDisplay = new ScoreDisplay();
+    root.getChildren().add(scoreDisplay);
+  }
 
-        ScoreDisplay scoreDisplay = new ScoreDisplay(GameStatus.SCORE_DISPLAY_XPOS, GameStatus.SCORE_DISPLAY_YPOS);
-        root.getChildren().add(scoreDisplay);
-        game.addScoreDisplay(scoreDisplay);
-    }
+  private void setUpLevelDisplay() {
+    levelDisplay = new LevelDisplay();
+    root.getChildren().add(levelDisplay);
+  }
 
-    public void addToRoot(Node element) {
-        root.getChildren().add(element);
-    }
+  public void setUpHighScoreDisplay() {
+    HighScoreReader highScoreReader = new HighScoreReader();
+    int highScore = highScoreReader.readInHighScore();
+    highScoreDisplay = new HighScoreDisplay(highScore);
+    root.getChildren().add(highScoreDisplay);
+  }
 
-    public void removeFromRoot(Node element) {
-        root.getChildren().remove(element);
-    }
+  public void addToRoot(Node element) {
+    root.getChildren().add(element);
+  }
 
-    public static void main (String[] args) {
-        launch(args);
-    }
+  public void removeFromRoot(Node element) {
+    root.getChildren().remove(element);
+  }
+
+  public void removeFromRoot(String id) {
+    root.getChildren().remove(root.lookup(id));
+  }
+
+  // following methods for testing purposes
+
+  public Game getGame() {
+    return game;
+  }
+
+  public ScoreDisplay getScoreDisplay() {
+    return scoreDisplay;
+  }
+
+  public LivesDisplay getLivesDisplay() {
+    return livesDisplay;
+  }
+
+  public LevelDisplay getLevelDisplay() {
+    return levelDisplay;
+  }
+
+  public HighScoreDisplay getHighScoreDisplay() {
+    return highScoreDisplay;
+  }
+
+  public static void main(String[] args) {
+    launch(args);
+  }
+
 }
