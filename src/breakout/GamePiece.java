@@ -9,7 +9,7 @@ public abstract class GamePiece extends Rectangle {
   private double yVelocity;
 
   /**
-   * Creates a Power Up at a specified location and with a specified image
+   * Creates a Game Piece at a specified location and with a specified image
    * @param x double representing the X position
    * @param y double representing the Y position
    * @param width double representing the width
