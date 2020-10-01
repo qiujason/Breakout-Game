@@ -107,15 +107,6 @@ public abstract class GamePiece extends Rectangle {
     yVelocity *= -1;
   }
 
-  public String toString() {
-      if (this instanceof PowerUp) {
-          return "PowerUp: " + this.getLives() + " " + ((PowerUp) this).isActive() + " " + +this
-              .getYVelocity();
-      } else {
-          return "Block " + this.getLives() + " " + this.getYVelocity();
-      }
-  }
-
   abstract void updateStatus();
 
 }
