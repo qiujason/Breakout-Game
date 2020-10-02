@@ -25,6 +25,17 @@ public class Game {
   private int level;
   private boolean pause;
 
+  /**
+   *
+   * @param gameLauncher
+   * @param livesDisplay
+   * @param scoreDisplay
+   * @param levelDisplay
+   * @param highScoreDisplay
+   * @param ball
+   * @param paddle
+   * @param gridOfGamePieces
+   */
   public Game(GameLauncher gameLauncher, LivesDisplay livesDisplay, ScoreDisplay scoreDisplay,
       LevelDisplay levelDisplay, HighScoreDisplay highScoreDisplay, Ball ball,
       Paddle paddle, GamePiece[][] gridOfGamePieces) {
