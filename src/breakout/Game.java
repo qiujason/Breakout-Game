@@ -148,7 +148,6 @@ public class Game {
           highScoreDisplay.updateHighScore(scoreDisplay.getScore());
           updateGamePieceStatus(gamePiece);
         }
-
       }
     }
   }
@@ -376,7 +375,6 @@ public class Game {
       case DIGIT3 -> jumpToLevel(3);
       case DIGIT4 -> jumpToLevel(4);
       case DIGIT5 -> jumpToLevel(5);
-
     }
   }
 
