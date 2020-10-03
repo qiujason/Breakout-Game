@@ -2,6 +2,12 @@ package breakout;
 
 import javafx.scene.shape.Rectangle;
 
+/**
+ * The GamePiece class is an abstract class that acts as the superclass of the blocks and power-ups
+ * used in the game. It contains both abstract and non-abstract methods that are inherent to both
+ * subclasses. GamePiece extends the JavaFX Rectangle class.
+ */
+
 public abstract class GamePiece extends Rectangle {
 
   private int lives;

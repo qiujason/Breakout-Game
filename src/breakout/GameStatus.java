@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The GameStatus class contains all static constants needed to set up and run the game.
+ */
+
 public final class GameStatus {
 
   public static final int WINDOWHEIGHT = 600;

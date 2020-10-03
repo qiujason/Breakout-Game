@@ -4,6 +4,12 @@ import javafx.scene.image.Image;
 
 import java.io.File;
 
+/**
+ * The EpandPaddlePowerUp is responsible for creating a power-up that, when applied, expands
+ * the paddle's width to make deflecting the ball easier. It extends PowerUp and implements all
+ * abstract methods, as well as other methods specific to this class's functioning.
+ */
+
 public class ExpandPaddlePowerUp extends PowerUp {
 
   /**
