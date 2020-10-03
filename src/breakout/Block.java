@@ -3,6 +3,11 @@ package breakout;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
+/**
+ * The Block class is responsible for creating representations of the blocks in the game console.
+ * Each block has a given amount of lives and an associated color.
+ */
+
 public class Block extends GamePiece {
 
   private final Paint ONE_HIT_BLOCK_COLOR = Color.web("#bae1ff");
@@ -23,13 +28,19 @@ public class Block extends GamePiece {
   }
 
   /**
-   * updates status of the block
+   * Updates status of the block when hit. One life is subtracted and the color is updated
+   * according to the new number of lives.
    */
   public void updateStatus() {
     subtractLife();
     setFill(determineColor(getLives()));
   }
 
+  /**
+   * Return the color of the block based on the number of lives it has remaining
+   * @param lives the current number of lives remaining
+   * @return the block's color
+   */
   private Paint determineColor(int lives) {
     return switch (lives) {
       case 1 -> ONE_HIT_BLOCK_COLOR;

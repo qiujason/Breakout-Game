@@ -4,6 +4,11 @@ import javafx.scene.image.Image;
 
 import java.io.File;
 
+/**
+ * The AddLifePowerUp is responsible for creating a power-up that, when applied, gives the
+ * user one extra life when playing the game. It extends PowerUp and implements all abstract methods,
+ * as well as other methods specific to this class's functioning.
+ */
 public class AddLifePowerUp extends PowerUp {
 
   /**
